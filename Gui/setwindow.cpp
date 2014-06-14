@@ -38,7 +38,8 @@ SetWindow::SetWindow(QWidget *parent) :
     connect(uii->battleButton, SIGNAL(clicked()), this, SLOT(selectBattleship()));
     connect(uii->directionButton, SIGNAL(clicked()), this, SLOT(changeDirection()));
     connect(uii->startButton, SIGNAL(clicked()), this, SLOT(slotSendTable()));
-    connect(uii->startButton, SIGNAL(clicked()), parent, SLOT(startGame()));
+    connect(uii->startButton, SIGNAL(clicked()), this, SLOT(checkSet()));
+    connect(this, SIGNAL(startGame()), parent, SLOT(startGame()));
     connect(uii->airCarrierButton, SIGNAL(clicked()), this, SLOT(selectAirCarrier()));
 
 }
@@ -51,6 +52,19 @@ SetWindow::~SetWindow()
 
 }
 
+void SetWindow::checkSet()
+{
+    //if((sub == -1) && (dest == -1) && (batt == -1) && (air == -1))
+    if(air == -1){
+        qDebug("Hilfe");
+        emit startGame();
+        game.player_print_boards();
+    }
+    else
+        uii->statusbar->showMessage("Platzieren Sie erst alle Schiffe.",5000);
+}
+
+
 void SetWindow::slotSendTable()
 {
     emit sendTable(uii->fieldTable);
@@ -60,35 +74,43 @@ void SetWindow::slotSendTable()
 void SetWindow::setPlayerShip()
 {
     Square *sq1, *sq2, *sq3, *sq4, *sq5;
-    sq1 = playerBoard.get_Square_ptr((size_t)itemList[0]->column(), (size_t)itemList[0]->row());
-    sq2 = playerBoard.get_Square_ptr((size_t)itemList[1]->column(), (size_t)itemList[1]->row());
+    sq1 = game.getBoardRef().get_Square_ptr((size_t)itemList[0]->column(), (size_t)itemList[0]->row());
+    sq2 = game.getBoardRef().get_Square_ptr((size_t)itemList[1]->column(), (size_t)itemList[1]->row());
 
     switch(zaehler){
         case 2:
             if(!game.place_ships(sq1,sq2)){
-                uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",5000);
+                uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",3000);
             }
             sub -= 1;
             break;
         case 3:
-            sq3 = playerBoard.get_Square_ptr((size_t)itemList[2]->column(), (size_t)itemList[2]->row());
+            sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column(), (size_t)itemList[2]->row());
             if(!game.place_ships(sq1,sq2,sq3))
-                uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",5000);
+                uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",3000);
             dest -= 1;
             break;
         case 4:
-            sq3 = playerBoard.get_Square_ptr((size_t)itemList[2]->column(), (size_t)itemList[2]->row());
-            sq4 = playerBoard.get_Square_ptr((size_t)itemList[3]->column(), (size_t)itemList[3]->row());
+            sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column(), (size_t)itemList[2]->row());
+            sq4 = game.getBoardRef().get_Square_ptr((size_t)itemList[3]->column(), (size_t)itemList[3]->row());
             if(!game.place_ships(sq1,sq2,sq3,sq4))
-                uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",5000);
+                uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",3000);
             batt -= 1;
             break;
         case 5:
-            sq3 = playerBoard.get_Square_ptr((size_t)itemList[2]->column(), (size_t)itemList[2]->row());
-            sq4 = playerBoard.get_Square_ptr((size_t)itemList[3]->column(), (size_t)itemList[3]->row());
-            sq5 = playerBoard.get_Square_ptr((size_t)itemList[4]->column(), (size_t)itemList[4]->row());
-            if(!game.place_ships(sq1,sq2,sq3,sq4,sq5))
-                uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",5000);
+            sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column(), (size_t)itemList[2]->row());
+            sq4 = game.getBoardRef().get_Square_ptr((size_t)itemList[3]->column(), (size_t)itemList[3]->row());
+            sq5 = game.getBoardRef().get_Square_ptr((size_t)itemList[4]->column(), (size_t)itemList[4]->row());
+            if(!game.place_ships(sq1,sq2,sq3,sq4,sq5)){
+                uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",3000);
+                for(int i=0;i<5;i++){
+                    qDebug("    resea");
+                    QTableWidgetItem *item = new QTableWidgetItem(QIcon("images/sea.png"),"",1000);
+                    qDebug("    1");
+                    uii->fieldTable->setItem(itemList[i]->column(),itemList[i]->row(),item);
+                    qDebug("    2");
+                }
+            }
             air -= 1;
             break;
     }
@@ -125,6 +147,7 @@ void SetWindow::discon()
     }
 }
 
+/*
 void SetWindow::resqueBoard()
 {
     QList<QTableWidgetItem> jk;
@@ -148,6 +171,7 @@ void SetWindow::resqueBoard()
         uii->fieldTable->setItem(a,b,&allItems[i]);
     }
 }
+*/
 
 // Saves the items witch are changed trough the dropEvent
 void SetWindow::getItems(QTableWidgetItem *item)
@@ -191,7 +215,7 @@ void SetWindow::changeDirection()
 void SetWindow::selectSubmarine()
 {
     zaehler = 2;
-    uii->label->setText("Zaehler = " + QString::number(zaehler));
+    //uii->label->setText("Zaehler = " + QString::number(zaehler));
     if(horizontal){
         uii->shipTable->setRowCount(1);
         uii->shipTable->setRowHeight(0,sqSize);

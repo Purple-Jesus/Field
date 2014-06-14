@@ -33,296 +33,290 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <widget class="QWidget" name="horizontalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>-1</x>
-      <y>9</y>
-      <width>1031</width>
-      <height>581</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetMaximumSize</enum>
-     </property>
-     <item>
-      <widget class="QTableWidget" name="fieldTable">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="cursor" stdset="0">
-        <cursorShape>CrossCursor</cursorShape>
-       </property>
-       <property name="autoFillBackground">
-        <bool>true</bool>
-       </property>
-       <property name="editTriggers">
-        <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed</set>
-       </property>
-       <property name="dragEnabled">
-        <bool>true</bool>
-       </property>
-       <property name="dragDropMode">
-        <enum>QAbstractItemView::DragDrop</enum>
-       </property>
-       <property name="defaultDropAction">
-        <enum>Qt::MoveAction</enum>
-       </property>
-       <row>
-        <property name="text">
-         <string>New Row</string>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMaximumSize</enum>
+      </property>
+      <item>
+       <widget class="QTableWidget" name="fieldTable">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
+        <property name="cursor" stdset="0">
+         <cursorShape>CrossCursor</cursorShape>
         </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
+        <property name="autoFillBackground">
+         <bool>true</bool>
         </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
+        <property name="editTriggers">
+         <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed</set>
         </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
+        <property name="dragEnabled">
+         <bool>true</bool>
         </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::DragDrop</enum>
         </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
+        <property name="defaultDropAction">
+         <enum>Qt::MoveAction</enum>
         </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
-        </property>
-       </row>
-       <column>
-        <property name="text">
-         <string>New Column</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>New Column</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>New Column</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>New Column</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>New Column</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>New Column</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>New Column</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>New Column</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>New Column</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>New Column</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>New Column</string>
-        </property>
-       </column>
-       <item row="0" column="0">
-        <property name="text">
-         <string notr="true"/>
-        </property>
-        <property name="textAlignment">
-         <set>AlignRight|AlignVCenter</set>
-        </property>
-        <property name="background">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>6</red>
-           <green>77</green>
-           <blue>176</blue>
-          </color>
-         </brush>
-        </property>
-        <property name="icon">
-         <iconset>
-          <normaloff>../images/sea.png</normaloff>../images/sea.png</iconset>
-        </property>
-        <property name="flags">
-         <set>ItemIsSelectable|ItemIsDragEnabled</set>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>5</number>
-       </property>
-       <property name="sizeConstraint">
-        <enum>QLayout::SetMinimumSize</enum>
-       </property>
-       <property name="leftMargin">
-        <number>0</number>
-       </property>
-       <property name="bottomMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QPushButton" name="submarineButton">
+        <row>
          <property name="text">
-          <string>Submarine</string>
+          <string>New Row</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="destroyerButton">
+        </row>
+        <row>
          <property name="text">
-          <string>Destroyer</string>
+          <string>New Row</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="battleButton">
+        </row>
+        <row>
          <property name="text">
-          <string>Battle Ship</string>
+          <string>New Row</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="airCarrierButton">
+        </row>
+        <row>
          <property name="text">
-          <string>Air Carrier</string>
+          <string>New Row</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QTableWidget" name="shipTable">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>240</width>
-           <height>250</height>
-          </size>
-         </property>
-         <property name="editTriggers">
-          <set>QAbstractItemView::NoEditTriggers</set>
-         </property>
-         <property name="dragEnabled">
-          <bool>true</bool>
-         </property>
-         <attribute name="horizontalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-         <attribute name="verticalHeaderVisible">
-          <bool>false</bool>
-         </attribute>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="directionButton">
+        </row>
+        <row>
          <property name="text">
-          <string>Horizontal</string>
+          <string>New Row</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="startButton">
+        </row>
+        <row>
          <property name="text">
-          <string>Start</string>
+          <string>New Row</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QLabel" name="label_2">
+        </row>
+        <row>
          <property name="text">
-          <string/>
+          <string>New Row</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="label">
+        </row>
+        <row>
          <property name="text">
-          <string/>
+          <string>New Row</string>
          </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </widget>
+        </row>
+        <row>
+         <property name="text">
+          <string>New Row</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>New Row</string>
+         </property>
+        </row>
+        <row>
+         <property name="text">
+          <string>New Row</string>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string>New Column</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>New Column</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>New Column</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>New Column</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>New Column</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>New Column</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>New Column</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>New Column</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>New Column</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>New Column</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>New Column</string>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string notr="true"/>
+         </property>
+         <property name="textAlignment">
+          <set>AlignRight|AlignVCenter</set>
+         </property>
+         <property name="background">
+          <brush brushstyle="SolidPattern">
+           <color alpha="255">
+            <red>6</red>
+            <green>77</green>
+            <blue>176</blue>
+           </color>
+          </brush>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../images/sea.png</normaloff>../images/sea.png</iconset>
+         </property>
+         <property name="flags">
+          <set>ItemIsSelectable|ItemIsDragEnabled</set>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>5</number>
+        </property>
+        <property name="sizeConstraint">
+         <enum>QLayout::SetMinimumSize</enum>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="submarineButton">
+          <property name="text">
+           <string>Submarine</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="destroyerButton">
+          <property name="text">
+           <string>Destroyer</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="battleButton">
+          <property name="text">
+           <string>Battle Ship</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="airCarrierButton">
+          <property name="text">
+           <string>Air Carrier</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="shipTable">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>240</width>
+            <height>250</height>
+           </size>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
+          <property name="dragEnabled">
+           <bool>true</bool>
+          </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="directionButton">
+          <property name="text">
+           <string>Horizontal</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="startButton">
+          <property name="text">
+           <string>Start</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -330,7 +324,7 @@
      <x>0</x>
      <y>0</y>
      <width>1040</width>
-     <height>27</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

@@ -11,12 +11,13 @@ PlayWindow::PlayWindow(Game _game, QWidget *parent) :
 {
     qDebug("    Playwindow");
     ui->setupUi(this);
+    ui->centralwidget->setWindowTitle("Ship Happens - " + QString::fromStdString(game.get_player_name()));
+    ui->label_2->setText("Gewaesser von " + QString::fromStdString(game.get_enemy_name()));
     width = 10;
     height = 10;
     sqSize = 45;
     pen.setWidth(10);
     pen.setJoinStyle(Qt::RoundJoin);
-    game.enemy_set_ship_test();
     tableManagement();
     connect(ui->enemyTable, SIGNAL(cellClicked(int,int)), this, SLOT(setBomb(int,int)));
     connect(ui->playerTable, SIGNAL(cellClicked(int,int)), this, SLOT(getBomb(int,int)));
@@ -29,7 +30,7 @@ PlayWindow::~PlayWindow()
 
 void PlayWindow::getBomb(int r, int c)
 {
-    if(playerBoard.get_Square_ptr((size_t)r,(size_t)c)->get_square_hit()){
+    if(playerBoard.get_Square_ptr((size_t)c+1,(size_t)r+1)->get_square_hit()){
         ui->statusbar->showMessage("Dieses Feld wurde schon bombardiert.");
         return;
     }
@@ -39,14 +40,14 @@ void PlayWindow::getBomb(int r, int c)
     }
     int size = ui->enemyTable->iconSize().height();
     QImage temp("images/sea.png");
-    if(playerBoard.get_Square_ptr((size_t)r,(size_t)c)->get_square_set()){
+    if(playerBoard.get_Square_ptr((size_t)c+1,(size_t)r+1)->get_square_set()){
         pen.setColor(red);
         painter.begin(&temp);
         painter.setPen(pen);
         painter.drawPoint(((size/2-0.5)),((size/2-0.5)));
         painter.end();
         ui->statusbar->showMessage("Yeaaaayyy das war der Gegner.");
-        playerBoard.get_Square_ptr(r,c)->set_hit();
+        playerBoard.get_Square_ptr((size_t)c+1,(size_t)r+1)->set_hit();
     }
     else{
         pen.setColor(black);
@@ -55,7 +56,7 @@ void PlayWindow::getBomb(int r, int c)
         painter.drawPoint(((size/2)-0.5),((size/2)-0.5));
         painter.end();
         ui->statusbar->showMessage("Das war leider nur Wasser.");
-        playerBoard.get_Square_ptr(r,c)->set_hit();
+        playerBoard.get_Square_ptr((size_t)c+1,(size_t)r+1)->set_hit();
     }
     ui->playerTable->setItem(r,c,new QTableWidgetItem(QIcon(QPixmap::fromImage(temp)),"",1000));
     game.change_activity_status();
@@ -64,7 +65,7 @@ void PlayWindow::getBomb(int r, int c)
 
 void PlayWindow::setBomb(int r, int c)
 {
-    if(enemyBoard.get_Square_ptr((size_t)r,(size_t)c)->get_square_hit()){
+    if(enemyBoard.get_Square_ptr((size_t)c+1,(size_t)r+1)->get_square_hit()){
         ui->statusbar->showMessage("Dieses Feld wurde schon bombardiert.");
         return;
     }
@@ -74,14 +75,14 @@ void PlayWindow::setBomb(int r, int c)
     }
     int size = ui->enemyTable->iconSize().height();
     QImage temp("images/sea.png");
-    if(enemyBoard.get_Square_ptr((size_t)r,(size_t)c)->get_square_set()){
+    if(playerBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->get_square_set()){
         pen.setColor(red);
         painter.begin(&temp);
         painter.setPen(pen);
         painter.drawPoint(((size/2-0.5)),((size/2-0.5)));
         painter.end();
         ui->statusbar->showMessage("Yeaaaayyy das war der Gegner.");
-        enemyBoard.get_Square_ptr(r,c)->set_hit();
+        enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
     }
     else{
         pen.setColor(black);
@@ -90,7 +91,7 @@ void PlayWindow::setBomb(int r, int c)
         painter.drawPoint(((size/2)-0.5),((size/2)-0.5));
         painter.end();
         ui->statusbar->showMessage("Das war leider nur Wasser.");
-        enemyBoard.get_Square_ptr(r,c)->set_hit();
+        enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
     }
     ui->enemyTable->setItem(r,c,new QTableWidgetItem(QIcon(QPixmap::fromImage(temp)),"",1000));
     game.change_activity_status();
@@ -128,8 +129,8 @@ void PlayWindow::tableManagement()
         QPixmap pixmap("images/sea.png");
         for(int i=0;i<width;i++){
             for(int j=0;j<height;j++){
-                if(k == 2){
-                    if(enemyBoard.get_Square_ptr(i,j)->get_square_set()){
+                if(k == 1){
+                    if(playerBoard.get_Square_ptr((size_t)(j+1),(size_t)(i+1))->get_square_set()){
                         QTableWidgetItem *tempItem = new QTableWidgetItem(QIcon("images/white.png"),"",1000);
                         table->setItem(i,j,tempItem);
                         table->itemAt(i,j)->setSizeHint(QSize(sqSize,sqSize));
@@ -157,7 +158,8 @@ void PlayWindow::setGameRef(Game &_game)
     qDebug("    getGameRef");
     game = _game;
 
-    enemyBoard = game.getEnemyBoardRef();
+    //enemyBoard = game.getEnemyBoardRef();
+    game.enemy_set_ship_test();
     playerBoard = game.getBoardRef();
     ui->label->setText(QString::fromStdString(game.get_player_name()));
 }

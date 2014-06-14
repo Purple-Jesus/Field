@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QString>
 #include <QTableWidget>
-#include "squareg.h"
 #include "game.h"
 #include "player.h"
 
@@ -54,6 +53,7 @@ private:
 
 signals:
     void sendTable(QTableWidget *);
+    void startGame();
 
 
 public slots:
@@ -67,6 +67,7 @@ public slots:
     void setPlayerShip();
     void changeDirection();
     void slotSendTable();
+    void checkSet();
 
 };
 

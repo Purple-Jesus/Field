@@ -56,9 +56,13 @@ void StartWindow::listWindowClosed()
 
 void StartWindow::startGame()
 {
+    qDebug(" startGame");
+    setW->getGameRef().player_print_boards();
     playW = new PlayWindow(setW->getGameRef(), this);
+    qDebug(" 1");
     setW->close();
     playW->setTableRef(setW->getTableRef());
+    qDebug(" 2");
     //playW->setGameRef((setW->getGameRef()));
     playW->show();
 
