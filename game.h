@@ -56,13 +56,10 @@ public:
 
     bool change_activity_status();
 
+
     void bomb_square(Square* _sq);
     bool place_ships(Square* _sq1, Square* _sq2, Square* sq3 = NULL, Square* _sq4 = NULL, Square* _sq5 = NULL);
 
-    Board& getBoardRef();       //FF 02.06
-    Board& getEnemyBoardRef();  //FF 10.06
-    bool getEnemyState();       //FF 10.06
-    bool getPlayerState();      //FF 10.06
 
     // help functions for terminal debugging
     void change_player_names();
@@ -80,6 +77,12 @@ public:
     void enemy_print_boards();
     void player_print_ships();
     void enemy_print_ships();
+
+    Board& getBoardRef();                  //FF 02.06
+    Board& getEnemyBoardRef();            //FF 10.06
+    bool getEnemyState();                //FF 10.06
+    bool getPlayerState();              //FF 10.06
+    void setStartActivity(bool);       //FF 15.06
 };
 
 #endif // GAME_H

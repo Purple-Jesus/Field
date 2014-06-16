@@ -95,7 +95,7 @@ std::string Player::get_name() {
  */
 bool Player::check_lose() {
 
-    size_t dest_ship_counter;
+    size_t dest_ship_counter=0;
 
     /**
      * itterate over the submarine array

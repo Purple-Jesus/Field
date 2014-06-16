@@ -40,9 +40,9 @@ private:
                                              finished his turn*/
     Board own_field;                    /**< Board own_field. a board object where the
                                              informations of the current field are stored*/
-    static size_t const num_subm = 5;   /**< The number of Submarines*/
-    static size_t const num_dest = 4;   /**< The number of Destoyer*/
-    static size_t const num_bash = 3;   /**< The number of Battleships*/
+    static size_t const num_subm = 4;   /**< The number of Submarines*/
+    static size_t const num_dest = 3;   /**< The number of Destoyer*/
+    static size_t const num_bash = 2;   /**< The number of Battleships*/
     static size_t const num_airc = 1;   /**< The number of Air Carriers*/
 
     Submarine subm[num_subm];           /**< Array of submarines*/
@@ -52,11 +52,11 @@ private:
 
 protected:
     void check_ships();
-    bool check_lose();
 
 
 public:
 
+    bool check_lose();
     Player ();                      // std. constructor
     Player (std::string _name);     // specific constructor using a given name
     ~Player ();                     // destructor

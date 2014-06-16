@@ -7,6 +7,7 @@ TARGET =
 DEPENDPATH += . Gui Player Player/Ships
 INCLUDEPATH += . Player Player/Ships Gui
 CONFIG +=  gui
+QT += testlib
 
 # Input
 HEADERS += game.h \
@@ -22,10 +23,13 @@ HEADERS += game.h \
            Player/Ships/ship.h \
            Player/Ships/submarine.h \
 		   Gui/listwindow.h \
-		   Gui/playwindow.h
+		   Gui/playwindow.h \
+    Gui/squareoccupied.h \
+    Gui/enddialog.h
 FORMS += Gui/setwindow.ui Gui/startwindow.ui \
 		 Gui/listwindow.ui \
-		 Gui/playwindow.ui
+		 Gui/playwindow.ui \
+    Gui/enddialog.ui
 SOURCES += game.cpp \
            main.cpp \
            Gui/setwindow.cpp \
@@ -39,6 +43,7 @@ SOURCES += game.cpp \
            Player/Ships/ship.cpp \
            Player/Ships/submarine.cpp \
 		   Gui/listwindow.cpp \
-		   Gui/playwindow.cpp
+		   Gui/playwindow.cpp \
+    Gui/enddialog.cpp
 
 OTHER_FILES +=

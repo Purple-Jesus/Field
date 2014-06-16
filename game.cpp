@@ -122,15 +122,15 @@ bool Game::change_activity_status() {
     if(Game::player.get_active()) {
         Game::player.set_not_active();
         Game::enemy.set_active();
-        return true;
+        return Game::player.check_lose();       // FF 16.06: return true;
     }
 
     else if (Game::enemy.get_active()) {
         Game::enemy.set_not_active();
         Game::player.set_active();
-        return true;
+        return Game::enemy.check_lose();       // FF 16.06: return false;
     }
-    return false;
+    //return false;     //FF 16.06
 }
 
 
@@ -929,6 +929,7 @@ void Game::enemy_set_ship_test() {
     Game::enemy.print_field();
 }
 
+// Not part of the original game class:
 Board& Game::getBoardRef()
 {
     return player.return_board_ref();
@@ -947,4 +948,16 @@ bool Game::getEnemyState()
 bool Game::getPlayerState()
 {
     return player.get_active();
+}
+
+void Game::setStartActivity(bool host)
+{
+    if(host){
+        player.set_active();
+        enemy.set_not_active();
+    }
+    else{
+        player.set_not_active();
+        enemy.set_active();
+    }
 }

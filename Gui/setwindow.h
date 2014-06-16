@@ -3,9 +3,11 @@
 
 #include <QMainWindow>
 #include <QString>
+#include <QEvent>
 #include <QTableWidget>
 #include "game.h"
 #include "player.h"
+#include "squareoccupied.h"
 
 namespace Ui {
 class SetWindow;
@@ -20,7 +22,7 @@ public:
     ~SetWindow();
 
     Game &getGameRef();
-    QTableWidget *getTableRef();
+    QTableWidget *getTable();
 
 
 private:
@@ -42,12 +44,12 @@ private:
     bool horizontal;
     QList<Square*> square;
     QList<QTableWidgetItem*> itemList;
-    QList<QTableWidgetItem> allItems;
+    QList<QIcon> allIcons;
+    QTableWidget rTable;
+    //SquareOccupied *oc;
 
     void tableManagement();
-    //void setShipTable(int len);
     void refresh(int);
-    void resqueBoard();
     void discon();
 
 
@@ -68,6 +70,8 @@ public slots:
     void changeDirection();
     void slotSendTable();
     void checkSet();
+    void resqueTable(int a, int b);
+    //bool eventFilter(QObject *, QEvent *);
 
 };
 

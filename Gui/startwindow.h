@@ -27,6 +27,10 @@ private:
     ListWindow *listW;
     SetWindow *setW;
     PlayWindow *playW;
+    bool host;
+
+signals:
+    void setStartActivity(bool);
 
 public slots:
     void getName(QString n);

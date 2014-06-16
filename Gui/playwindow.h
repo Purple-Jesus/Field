@@ -5,6 +5,7 @@
 #include <QTableWidget>
 #include "game.h"
 #include <QPainter>
+#include "enddialog.h"
 
 namespace Ui {
 class PlayWindow;
@@ -15,7 +16,7 @@ class PlayWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit PlayWindow(Game _game, QWidget *parent = 0);
+    explicit PlayWindow(QTableWidget *table, Game _game, QWidget *parent = 0);
     ~PlayWindow();
     
 
@@ -33,14 +34,16 @@ private:
     QColor black, red;
     QPen pen;
     QPainter painter;
+    EndDialog *end;
 
     void tableManagement();
     void setShips();
 
+
 public slots:
     void setGameRef(Game &_game);
-    void setTableRef(QTableWidget *table);
-    void setBomb(int r, int c);
+    void getStartActivity(bool);
+    void setBomb(int a, int b);
     void getBomb(int r, int c);
 };
 

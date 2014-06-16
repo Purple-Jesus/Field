@@ -20,7 +20,7 @@ StartWindow::~StartWindow()
     delete setW;
     delete playW;
     delete ui;
-    qDebug("StartWindow beendet.");
+    qDebug("~StartWindow");
 }
 
 
@@ -34,6 +34,7 @@ void StartWindow::openGame()
 {
     ui->statusBar->showMessage("Wait for network stuff.");
     // call network functions to host a game
+    host = true;
     setW->show();
     hide();
 }
@@ -42,6 +43,7 @@ void StartWindow::joinGame()
 {
     listW = new ListWindow(this);
     // call network functions to join a game
+    host = false;
     listW->show();
 
     hide();
@@ -56,14 +58,12 @@ void StartWindow::listWindowClosed()
 
 void StartWindow::startGame()
 {
-    qDebug(" startGame");
     setW->getGameRef().player_print_boards();
-    playW = new PlayWindow(setW->getGameRef(), this);
-    qDebug(" 1");
+    playW = new PlayWindow(setW->getTable(),setW->getGameRef(), this);
+    connect(this, SIGNAL(setStartActivity(bool)), playW, SLOT(getStartActivity(bool)));
     setW->close();
-    playW->setTableRef(setW->getTableRef());
-    qDebug(" 2");
     //playW->setGameRef((setW->getGameRef()));
+    emit setStartActivity(host);
     playW->show();
 
 }
