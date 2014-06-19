@@ -28,16 +28,16 @@
  */
 class Submarine : public virtual Ship {
 private:    
-    bool alive;                     /**< the alive flag indicates if the submarine
-                                         has squares left that have not been hit yet*/
-    bool set;                       /**< the set flag indicates if the submarine
-                                         has been set on the board*/
-    static size_t const type = 1;   /**< the type is just an id that can be used
-                                         to get a ships type 1 = submarine*/
-    static size_t const lenght = 2; /**< the lenght of each ship is meassured in
-                                         Squares it takes on the field*/
-    Square* position[lenght];       /**< the position array holds pointer to the
-                                         boards squares, the ship has been placed on*/
+    bool alive;                         /**< the alive flag indicates if the submarine
+                                             has squares left that have not been hit yet*/
+    bool set;                           /**< the set flag indicates if the submarine
+                                             has been set on the board*/
+    static Ship_Type const type = Submarine_t;   /**< the type is just an id that can be used
+                                                   to get a ships type */
+    static size_t const lenght = 2;     /**< the lenght of each ship is meassured in
+                                             Squares it takes on the field*/
+    Square* position[lenght];           /**< the position array holds pointer to the
+                                             boards squares, the ship has been placed on*/
 
 public:
     Submarine();
@@ -55,8 +55,11 @@ public:
     void check_ship_stat();
     void set_ship(Square* _sq1, Square* _sq2);
 
+# ifndef GRAPHIC
     // help func for terminal testing purposes
     void print_ship();
+# endif // GRAPHIC
+
 };
 
 #endif // SUBMARINE_H

@@ -17,10 +17,16 @@
 # include "my_headers.h"
 # include "Player/square.h"
 
-# ifndef SHIPS
-# define SHIPS
+# ifndef SHIP_TYPE
+# define SHIP_TYPE
+
 
 typedef
+/**
+ * @brief The Enum Ship_Type
+ * The enum Ship_Type holds all possible Types of Ships, and equals them to a unique
+ * integer. This prevents a user from abusing the cernel by calling not existant ships.
+ */
 enum {
 
     Ship_t = 0,
@@ -30,7 +36,7 @@ enum {
     AirCarrier_t = 4
 } Ship_Type;
 
-# endif //SHIPS
+# endif //SHIP_TYPE
 
 /**
  * @brief The Ship class
@@ -77,8 +83,10 @@ enum {
 
      virtual size_t get_lenght();
 
+# ifndef GRAPHIC
      // help func for terminal testing purposes
      void print_ship();
+# endif // GRAPHIC
  };
 
  # endif // SHIP_H

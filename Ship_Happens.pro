@@ -24,7 +24,6 @@ HEADERS += game.h \
            Player/Ships/submarine.h \
 		   Gui/listwindow.h \
 		   Gui/playwindow.h \
-    Gui/squareoccupied.h \
     Gui/enddialog.h
 FORMS += Gui/setwindow.ui Gui/startwindow.ui \
 		 Gui/listwindow.ui \

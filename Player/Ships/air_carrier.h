@@ -28,16 +28,16 @@
  */
 class AirCarrier : public virtual Ship {
 private:
-    bool alive;                     /**< the alive flag indicates if the ship has
-                                         squares left that have not been hit yet*/
-    bool set;                       /**< the set flag indicates if the air carrier
-                                         has been set on the board*/
-    static size_t const type = 4;   /**< the type is just an id that can be used
-                                         to get a ships type 4 = air carrier*/
-    static size_t const lenght = 5; /**< the lenght of each ship is meassured in
-                                         Squares it takes on the field*/
-    Square* position[lenght];       /**< the position array holds pointer to the
-                                         boards squares, the ship has been placed on*/
+    bool alive;                         /**< the alive flag indicates if the ship has
+                                             squares left that have not been hit yet*/
+    bool set;                           /**< the set flag indicates if the air carrier
+                                             has been set on the board*/
+    static Ship_Type const type = AirCarrier_t;  /**< the type is just an id that can be used
+                                                   to get a ships type 4 = air carrier*/
+    static size_t const lenght = 5;     /**< the lenght of each ship is meassured in
+                                             Squares it takes on the field*/
+    Square* position[lenght];           /**< the position array holds pointer to the
+                                             boards squares, the ship has been placed on*/
 
 public:
     AirCarrier();
@@ -56,8 +56,10 @@ public:
 
     void set_ship(Square* _sq1, Square* _sq2, Square* _sq3, Square* _sq4, Square* _sq5);
 
+# ifndef GRAPHIC
     // help func for terminal testing purposes
     void print_ship();
+# endif // GRAPHIC
 
 };
 

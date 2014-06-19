@@ -38,6 +38,7 @@ public slots:
     void joinGame();
     void listWindowClosed();
     void startGame();
+    void revenge();
 };
 
 #endif // STARTWINDOW_H

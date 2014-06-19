@@ -45,6 +45,7 @@ public slots:
     void getStartActivity(bool);
     void setBomb(int a, int b);
     void getBomb(int r, int c);
+    void revenge();
 };
 
 #endif // PLAYWINDOW_H

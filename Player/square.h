@@ -23,6 +23,7 @@
  *
  * @author m-a-d
  * @version 0.1
+ * @date 30. Mai 2014
  */
 class Square{
 private:
@@ -49,8 +50,6 @@ public:
     void set_disabled ();
     void un_set_disabled ();
     bool get_square_disabled ();
-
-    bool legal ();
 };
 
 # endif // SQUARE_H

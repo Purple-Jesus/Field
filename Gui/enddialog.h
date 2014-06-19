@@ -3,6 +3,7 @@
 
 #include <QDialog>
 
+
 namespace Ui {
 class EndDialog;
 }
@@ -12,7 +13,7 @@ class EndDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit EndDialog(bool win, QWidget *parent = 0);
+    explicit EndDialog(std::string name, bool win, QWidget *parent = 0);
     ~EndDialog();
 
 private:

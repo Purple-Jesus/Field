@@ -20,6 +20,12 @@
 
 /**
  * @brief The Game class
+ * @author m-a-d
+ * @version 0.1
+ * the game class holds two player objects one for the local player and another for
+ * the second player. It contains the interfaces for the usage of the kernel holding
+ * the information to be used in different modes, e.g. terminal or graphic mode and
+ * local or network wise.
  */
 class Game {
 private:
@@ -27,6 +33,8 @@ private:
    Player enemy;    /**< this is the second player later on connected via Network*/
 
 protected:
+
+# ifndef GRAPHIC
    bool read_ship_coordinates(size_t &_xa, size_t &_ya, size_t &_xe, size_t &_ye);
 
    bool read_ship_coordinates(size_t &_xa, size_t &_ya, size_t &_xe, size_t &_ye, size_t &_x3, size_t &_y3);
@@ -38,6 +46,7 @@ protected:
                    size_t& _x4, size_t& _y4, size_t& _x5, size_t& y5);
 
    bool read_bomb_coordinates(size_t& _xb, size_t& _yb);
+# endif // GRAPHIC
 
    void print_commands(char* msg);
 
@@ -56,11 +65,16 @@ public:
 
     bool change_activity_status();
 
-
-    void bomb_square(Square* _sq);
+    void bomb_square(size_t _x, size_t _y);
     bool place_ships(Square* _sq1, Square* _sq2, Square* sq3 = NULL, Square* _sq4 = NULL, Square* _sq5 = NULL);
 
+    Board& getBoardRef();                  //FF 02.06
+    Board& getEnemyBoardRef();            //FF 10.06
+    bool getEnemyState();                //FF 10.06
+    bool getPlayerState();              //FF 10.06
+    void setStartActivity(bool);       //FF 15.06
 
+# ifndef GRAPHIC
     // help functions for terminal debugging
     void change_player_names();
     void player_set_ship_routine();
@@ -77,12 +91,8 @@ public:
     void enemy_print_boards();
     void player_print_ships();
     void enemy_print_ships();
+# endif // GRAPHIC
 
-    Board& getBoardRef();                  //FF 02.06
-    Board& getEnemyBoardRef();            //FF 10.06
-    bool getEnemyState();                //FF 10.06
-    bool getPlayerState();              //FF 10.06
-    void setStartActivity(bool);       //FF 15.06
 };
 
 #endif // GAME_H

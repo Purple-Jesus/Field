@@ -8,6 +8,8 @@
 # ifndef MY_HEADERS_H
 # define MY_HEADERS_H
 
+//# define GRAPHIC
+
 # include <iostream>
 # include <string>
 # include <exception>

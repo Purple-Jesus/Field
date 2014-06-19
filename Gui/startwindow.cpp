@@ -67,3 +67,8 @@ void StartWindow::startGame()
     playW->show();
 
 }
+
+void StartWindow::revenge()
+{
+    int i=0;
+}

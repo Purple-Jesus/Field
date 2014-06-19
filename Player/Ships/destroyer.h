@@ -28,16 +28,16 @@
  */
 class Destroyer : public virtual Ship {
 private:
-    bool alive;                     /**< the alive flag indicates if the destroyer
-                                         has squares left that have not been hit yet*/
-    bool set;                       /**< the set flag indicates if the destroyer
-                                         has been set on the board*/
-    static size_t const type = 2;   /**< the type is just an id that can be used
-                                         to get a ships type 2 = destroyer*/
-    static size_t const lenght = 3; /**< the lenght of each ship is meassured in
-                                         Squares it takes on the field*/
-    Square* position[lenght];       /**< the position array holds pointer to the
-                                         boards squares, the ship has been placed on*/
+    bool alive;                         /**< the alive flag indicates if the destroyer
+                                             has squares left that have not been hit yet*/
+    bool set;                           /**< the set flag indicates if the destroyer
+                                             has been set on the board*/
+    static Ship_Type const type = Destroyer_t;   /**< the type is just an id that can be used
+                                                   to get a ships type 2 = destroyer*/
+    static size_t const lenght = 3;     /**< the lenght of each ship is meassured in
+                                             Squares it takes on the field*/
+    Square* position[lenght];           /**< the position array holds pointer to the
+                                             boards squares, the ship has been placed on*/
 
 public:
     Destroyer();
@@ -55,8 +55,11 @@ public:
     void set_ship(Square* _sq1, Square* _sq2, Square* _sq3);
     void reset_ship();
 
+# ifndef GRAPHIC
     // help func for terminal testing purposes
     void print_ship();
+# endif // GRAPHIC
+
 };
 
 #endif // DESTROYER_H

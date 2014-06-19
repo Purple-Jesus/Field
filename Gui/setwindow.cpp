@@ -10,9 +10,9 @@ SetWindow::SetWindow(QWidget *parent) :
 {
     qDebug("    SetWindow");
     //oc = new SquareOccupied(this);
-    sub=4;
-    dest=3;
-    batt=2;
+    sub=5;
+    dest=4;
+    batt=3;
     air=1;
     horizontal = true;
     sqSize = 45;
@@ -27,11 +27,8 @@ SetWindow::SetWindow(QWidget *parent) :
     game.change_player_name(playerN);
     game.change_enemy_name(enemyN);
     playerBoard = game.getBoardRef();
-    playerBoard.init_board();
-    playerBoard.clear_board();
-    //uii->fieldTable->installEventFilter(eventFilter);
 
-    //uii->shipTable->resize(6*width,6*height);
+    //uii->fieldTable->installEventFilter(eventFilter);
 
     //connect(uii->submarineButton, SIGNAL(clicked()), this, SLOT(setSubmarine()));
     connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));

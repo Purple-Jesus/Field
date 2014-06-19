@@ -15,6 +15,7 @@
 
 # include "battleship.h"
 
+
 /**
  * @brief Battleship::Battleship
  * std constructor
@@ -24,6 +25,7 @@
 Battleship::Battleship() {
     Battleship::reset_ship();
 }
+
 
 /**
  * @brief Battleship::~Battleship

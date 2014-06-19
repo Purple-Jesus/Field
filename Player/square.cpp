@@ -61,7 +61,7 @@ Square::~Square() {
  * @return true if set flag has been toggled to true
  */
 bool Square::set_square() {
-    if (Square::legal()) {
+    if (!(Square::disabled)) {
         Square::set = true;
         return true;
     }
@@ -163,19 +163,4 @@ void Square::un_set_disabled() {
  */
 bool Square::get_square_disabled() {
     return Square::disabled;
-}
-
-
-/**
- * @brief Square::legal
- * Checks if interaction with this square is legal.
- * if the square is disabled (Square::disabled = true) this func will return false, what
- * indicates that the use of this square is illegal.
- * @return bool != Square::disabled
- */
-bool Square::legal() {
-    if (Square::disabled) {
-        return false;
-    }
-    return true;
 }

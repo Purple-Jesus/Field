@@ -28,16 +28,16 @@
  */
 class Battleship : public virtual Ship {
 private:
-    bool alive;                     /**< the alive flag indicates if the battleship
-                                         has squares left that have not been hit yet*/
-    bool set;                       /**< the set flag indicates if the battle ship
-                                         has been set on the board*/
-    static size_t const type = 3;   /**< the type is just an id that can be used
-                                         to get a ships type 3 = battleship*/
-    static size_t const lenght = 4; /**< the lenght of each ship is meassured in
-                                         Squares it takes on the field*/
-    Square* position[lenght];       /**< the position array holds pointer to the
-                                         boards squares, the ship has been placed on*/
+    bool alive;                         /**< the alive flag indicates if the battleship
+                                             has squares left that have not been hit yet*/
+    bool set;                           /**< the set flag indicates if the battle ship
+                                             has been set on the board*/
+    static Ship_Type const type = Battleship_t; /**< the type is just an id that can be used
+                                                  to get a ships type 3 = battleship*/
+    static size_t const lenght = 4;     /**< the lenght of each ship is meassured in
+                                             Squares it takes on the field*/
+    Square* position[lenght];           /**< the position array holds pointer to the
+                                             boards squares, the ship has been placed on*/
 public:
     Battleship();
     ~Battleship();
@@ -53,10 +53,12 @@ public:
 
     void display_ship();
     void set_ship(Square* _sq1, Square* _sq2, Square* _sq3, Square* _sq4);
+
 # ifndef GRAPHIC
     // help func for terminal testing purposes
     void print_ship();
-# endif
+# endif // GRAPHIC
+
 };
 
 #endif // BATTLESHIP_H

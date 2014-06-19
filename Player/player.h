@@ -40,9 +40,9 @@ private:
                                              finished his turn*/
     Board own_field;                    /**< Board own_field. a board object where the
                                              informations of the current field are stored*/
-    static size_t const num_subm = 4;   /**< The number of Submarines*/
-    static size_t const num_dest = 3;   /**< The number of Destoyer*/
-    static size_t const num_bash = 2;   /**< The number of Battleships*/
+    static size_t const num_subm = 5;   /**< The number of Submarines*/
+    static size_t const num_dest = 4;   /**< The number of Destoyer*/
+    static size_t const num_bash = 3;   /**< The number of Battleships*/
     static size_t const num_airc = 1;   /**< The number of Air Carriers*/
 
     Submarine subm[num_subm];           /**< Array of submarines*/
@@ -52,11 +52,11 @@ private:
 
 protected:
     void check_ships();
+    bool check_lose();
 
 
 public:
 
-    bool check_lose();
     Player ();                      // std. constructor
     Player (std::string _name);     // specific constructor using a given name
     ~Player ();                     // destructor
@@ -93,12 +93,14 @@ public:
     Battleship& get_BattleShip_ref(size_t _num);
     AirCarrier& get_AirCarrier_ref(size_t _num);
 
+# ifndef GRAPHIC
     // member func. for testing purposes
     void print_field();
     void print_enemy_field(Board& _en_field);
     void print_ships();
-    bool place_ship(size_t _type, size_t _num, size_t _x1, size_t _y1, size_t _x2, size_t _y2,
+    bool place_ship(Ship_Type _type, size_t _num, size_t _x1, size_t _y1, size_t _x2, size_t _y2,
                     size_t _x3 = 0, size_t _y3 = 0, size_t _x4 = 0, size_t _y4 = 0, size_t _x5 = 0, size_t _y5 = 0);
+# endif // GRAPHIC
 };
 
 # endif // PLAYER_H

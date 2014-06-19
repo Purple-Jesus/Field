@@ -27,7 +27,6 @@
 # include "player.h"
 #include <QDebug>
 
-
 /**
  * @brief Player::Player
  * std constructor
@@ -95,7 +94,7 @@ std::string Player::get_name() {
  */
 bool Player::check_lose() {
 
-    size_t dest_ship_counter=0;
+    size_t dest_ship_counter = 0;
 
     /**
      * itterate over the submarine array
@@ -105,7 +104,7 @@ bool Player::check_lose() {
 
         if(!(subm_ref.get_ship_alive())) {
             dest_ship_counter++;
-            //std::cout << dest_ship_counter << std::endl;
+            qDebug("Sub: %d",num_subm);
         }
     }
 
@@ -116,7 +115,6 @@ bool Player::check_lose() {
         Destroyer& dest_ref = Player::dest[count];
         if(!(dest_ref.get_ship_alive())) {
             dest_ship_counter ++;
-            //std::cout << dest_ship_counter << std::endl;
         }
     }
 
@@ -128,7 +126,6 @@ bool Player::check_lose() {
 
         if(!(bash_ref.get_ship_alive())) {
             dest_ship_counter ++;
-            //std::cout << dest_ship_counter << std::endl;
         }
     }
 
@@ -140,7 +137,6 @@ bool Player::check_lose() {
 
         if(!(airc_ref.get_ship_alive())) {
             dest_ship_counter ++;
-            //std::cout << dest_ship_counter << std::endl;
         }
     }
 
@@ -152,7 +148,7 @@ bool Player::check_lose() {
         Player::lost = true;
         std::cout << "All ships were destroyed" << std::endl;
     }
-
+    qDebug("Zerstoerte Schiffe: %d",dest_ship_counter);
     return Player::lost;
 }
 
@@ -462,7 +458,7 @@ void Player::print_ships() {
  * @param _y5
  * @return
  */
-bool Player::place_ship(size_t _type, size_t _num, size_t _x1, size_t _y1, size_t _x2, size_t _y2,
+bool Player::place_ship(Ship_Type _type, size_t _num, size_t _x1, size_t _y1, size_t _x2, size_t _y2,
                    size_t _x3, size_t _y3, size_t _x4, size_t _y4, size_t _x5, size_t _y5) {
     bool _set = false;
     Square* _sq1 = Player::own_field.get_Square_ptr(_x1, _y1);
@@ -473,8 +469,8 @@ bool Player::place_ship(size_t _type, size_t _num, size_t _x1, size_t _y1, size_
 
     switch (_type) {
 
-    // type 1 = submarine -> lenght = 2
-    case 1:
+    // type Submarine -> lenght = 2
+    case Submarine_t:
         if(Player::own_field.get_squares_empty(_sq1, _sq2)) {
             Player::own_field.set_ship(_x1, _y1, _x2, _y2);
             Player::subm[_num - 1].set_ship(Player::own_field.get_Square_ptr(_x1, _y1),
@@ -483,8 +479,8 @@ bool Player::place_ship(size_t _type, size_t _num, size_t _x1, size_t _y1, size_
 
         break;
 
-    // type 2 = destroyer -> lenght = 3
-    case 2:
+    // type Destroyer -> lenght = 3
+    case Destroyer_t:
         if(Player::own_field.get_squares_empty(_sq1, _sq2, _sq3)) {
             Player::dest[_num - 1].set_ship(Player::own_field.get_Square_ptr(_x1, _y1),
                                             Player::own_field.get_Square_ptr(_x2, _y2),
@@ -494,8 +490,8 @@ bool Player::place_ship(size_t _type, size_t _num, size_t _x1, size_t _y1, size_
 
         break;
 
-     // type 3 = battleship -> lenght = 4
-     case 3:
+     // type Battleship -> lenght = 4
+     case Battleship_t:
         if(Player::own_field.get_squares_empty(_sq1, _sq2, _sq3, _sq4)) {
             Player::bash[_num -1].set_ship(Player::own_field.get_Square_ptr(_x1, _y1),
                                            Player::own_field.get_Square_ptr(_x2, _y2),
@@ -506,8 +502,8 @@ bool Player::place_ship(size_t _type, size_t _num, size_t _x1, size_t _y1, size_
 
         break;
 
-    // type 4 = air carrier -> lenght = 5
-    case 4:
+    // type Air carrier -> lenght = 5
+    case AirCarrier_t:
         if(Player::own_field.get_squares_empty(_sq1, _sq2, _sq3, _sq4, _sq5)) {
             Player::airc[_num - 1].set_ship(Player::own_field.get_Square_ptr(_x1, _y1),
                                             Player::own_field.get_Square_ptr(_x2, _y2),
@@ -520,7 +516,7 @@ bool Player::place_ship(size_t _type, size_t _num, size_t _x1, size_t _y1, size_
         break;
     // default for wrong ship type
     default:
-        std::cout << _num << " is not a ship type" << std::endl;
+        std::cout << _type << " is not a ship type" << std::endl;
     }
     return _set;
 }

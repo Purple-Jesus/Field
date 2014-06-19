@@ -7,7 +7,6 @@
 #include <QTableWidget>
 #include "game.h"
 #include "player.h"
-#include "squareoccupied.h"
 
 namespace Ui {
 class SetWindow;

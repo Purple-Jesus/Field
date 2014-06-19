@@ -29,6 +29,11 @@ PlayWindow::~PlayWindow()
     delete ui;
 }
 
+void PlayWindow::revenge()
+{
+
+}
+
 void PlayWindow::getBomb(int r, int c)
 {
     if(game.getPlayerState()){
@@ -44,13 +49,21 @@ void PlayWindow::getBomb(int r, int c)
 
     int size = ui->enemyTable->iconSize().height();
     QImage temp("images/sea.png");
+    playerBoard.get_Square_ptr((size_t)c+1,(size_t)r+1)->set_hit();
     if(playerBoard.get_Square_ptr((size_t)c+1,(size_t)r+1)->get_square_set()){
+        playerBoard.get_Square_ptr((size_t)c+1,(size_t)r+1)->set_hit();
         pen.setColor(red);
         painter.begin(&temp);
         painter.setPen(pen);
         painter.drawPoint(((size/2-0.5)),((size/2-0.5)));
         painter.end();
         ui->statusbar->showMessage("Yeaaaayyy das war ein gegnerisches Schiff.",5000);
+        if(game.change_activity_status()){
+            qDebug("    NoWindow?");
+            end = new EndDialog(game.get_player_name(),false,this);
+            end->show();
+        }
+        game.change_activity_status();
     }
     else{
         pen.setColor(black);
@@ -59,13 +72,9 @@ void PlayWindow::getBomb(int r, int c)
         painter.drawPoint(((size/2)-0.5),((size/2)-0.5));
         painter.end();
         ui->statusbar->showMessage("Das war leider nur Wasser.",5000);
+        game.change_activity_status();
     }
     ui->playerTable->setItem(r,c,new QTableWidgetItem(QIcon(QPixmap::fromImage(temp)),"",1000));
-    playerBoard.get_Square_ptr((size_t)c+1,(size_t)r+1)->set_hit();
-    if(game.change_activity_status()){
-        qDebug("    KeinFenster?");
-        end = new EndDialog(true,this);
-    }
 
 }
 
@@ -92,7 +101,8 @@ void PlayWindow::setBomb(int r, int c)
         ui->statusbar->showMessage("Yeaaaayyy das war der Gegner.",5000);
         enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
         if(game.change_activity_status()){
-            end = new EndDialog(false,this);
+            end = new EndDialog(game.get_enemy_name(),false,this);
+            end->show();
         }
         game.change_activity_status();
     }
@@ -146,8 +156,8 @@ void PlayWindow::tableManagement()
         QPixmap left("images/left.png");
         QPixmap vmid("images/vmiddle.png");
         QPixmap right("images/right.png");
-        for(size_t i=0;i<width;i++){
-            for(size_t j=0;j<height;j++){
+        for(size_t i=0;i<(size_t)width;i++){
+            for(size_t j=0;j<(size_t)height;j++){
                 if(k == 1){
 
                     if(playerBoard.get_Square_ptr(j+1, i+1)->get_square_set()){
