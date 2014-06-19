@@ -993,7 +993,7 @@ void Game::enemy_set_ship_test() {
      */
     Game::enemy.place_ship(Battleship_t, 1, 5, 3, 6, 3, 7, 3, 8, 3);
     Game::enemy.place_ship(Battleship_t, 2, 5, 5, 5, 6, 5, 7, 5, 8);
-    Game::enemy.place_ship(Battleship_t, 3, 10, 7, 10, 8, 10, 9, 10, 10);
+    //Game::enemy.place_ship(Battleship_t, 3, 10, 7, 10, 8, 10, 9, 10, 10);
 
     /**
      * set the air carrier
@@ -1036,3 +1036,10 @@ void Game::setStartActivity(bool host)
         enemy.set_active();
     }
 }
+
+Player& Game::getPlayer()
+{
+    Player &p = Game::player;
+    return p;
+}
+

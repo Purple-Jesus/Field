@@ -41,10 +41,10 @@ private:
 
 
 public slots:
-    void setGameRef(Game &_game);
+    //void setGameRef(Game &_game);
     void getStartActivity(bool);
     void setBomb(int a, int b);
-    void getBomb(int r, int c);
+    //void getBomb(int r, int c);
     void revenge();
 };
 

@@ -5,9 +5,9 @@
 TEMPLATE = app
 TARGET =
 DEPENDPATH += . Gui Player Player/Ships
-INCLUDEPATH += . Player Player/Ships Gui
+INCLUDEPATH += . Player Player/Ships Gui network
 CONFIG +=  gui
-QT += testlib
+QT += network
 
 # Input
 HEADERS += game.h \
@@ -24,7 +24,9 @@ HEADERS += game.h \
            Player/Ships/submarine.h \
 		   Gui/listwindow.h \
 		   Gui/playwindow.h \
-    Gui/enddialog.h
+    Gui/enddialog.h \
+    network/mysocket.h \
+    network/myserver.h
 FORMS += Gui/setwindow.ui Gui/startwindow.ui \
 		 Gui/listwindow.ui \
 		 Gui/playwindow.ui \
@@ -43,6 +45,8 @@ SOURCES += game.cpp \
            Player/Ships/submarine.cpp \
 		   Gui/listwindow.cpp \
 		   Gui/playwindow.cpp \
-    Gui/enddialog.cpp
+    Gui/enddialog.cpp \
+    network/mysocket.cpp \
+    network/myserver.cpp
 
 OTHER_FILES +=

@@ -73,6 +73,7 @@ public:
     bool getEnemyState();                //FF 10.06
     bool getPlayerState();              //FF 10.06
     void setStartActivity(bool);       //FF 15.06
+    Player& getPlayer();               //FF 19.06
 
 # ifndef GRAPHIC
     // help functions for terminal debugging

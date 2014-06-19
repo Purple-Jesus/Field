@@ -41,7 +41,7 @@ void StartWindow::openGame()
 
 void StartWindow::joinGame()
 {
-    listW = new ListWindow(this);
+    listW = new ListWindow(socket,this);
     // call network functions to join a game
     host = false;
     listW->show();

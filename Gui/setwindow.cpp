@@ -96,14 +96,22 @@ void SetWindow::setPlayerShip()
                         uii->fieldTable->itemAt(i,j)->setIcon(allIcons[index[i][j]]);
                     }
                 }
+
                 connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
             }
+            else
+                game.getPlayer().get_Submarine_ref(sub).set_ship(sq1,sq2);
             sub -= 1;
             break;
         case 3:
             sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
             if(!game.place_ships(sq1,sq2,sq3))
                 uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",3000);
+            else{
+                game.getPlayer().get_Destroyer_ref((size_t)dest).set_ship(sq1,sq2,sq3);
+                if(game.getPlayer().get_Destroyer_ref((size_t)dest).get_ship_set())
+                    uii->statusbar->showMessage("Zerstoerer gesetzt:",2000);
+            }
             dest -= 1;
             break;
         case 4:
@@ -111,6 +119,8 @@ void SetWindow::setPlayerShip()
             sq4 = game.getBoardRef().get_Square_ptr((size_t)itemList[3]->column()+1, (size_t)itemList[3]->row()+1);
             if(!game.place_ships(sq1,sq2,sq3,sq4))
                 uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",3000);
+            else
+                game.getPlayer().get_BattleShip_ref(batt).set_ship(sq1,sq2,sq3,sq4);
             batt -= 1;
             break;
         case 5:
@@ -127,6 +137,8 @@ void SetWindow::setPlayerShip()
                     qDebug("    2");
                 }
             }
+            else
+                game.getPlayer().get_AirCarrier_ref(air).set_ship(sq1,sq2,sq3,sq4,sq5);
             air -= 1;
             break;
     }

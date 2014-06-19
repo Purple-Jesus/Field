@@ -4,6 +4,8 @@
 #include "Gui/setwindow.h"
 #include "Gui/listwindow.h"
 #include "playwindow.h"
+#include "myserver.h"
+#include "mysocket.h"
 #include <QMainWindow>
 #include <QString>
 #include <QDebug>
@@ -27,6 +29,8 @@ private:
     ListWindow *listW;
     SetWindow *setW;
     PlayWindow *playW;
+    MyServer server;
+    MySocket socket;
     bool host;
 
 signals:
