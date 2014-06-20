@@ -4,7 +4,7 @@
 
 TEMPLATE = app
 TARGET =
-DEPENDPATH += . Gui Player Player/Ships
+DEPENDPATH += . Gui Player Player/Ships network
 INCLUDEPATH += . Player Player/Ships Gui network
 CONFIG +=  gui
 QT += network

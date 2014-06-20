@@ -9,7 +9,7 @@ MySocket::MySocket(QObject *parent) :
 {
 }
 
-bool MySocket::StartSocket(QString ip){
+QString MySocket::StartSocket(QString ip){
 
     socket = new QTcpSocket(this);
     QTextStream cin(stdin);
@@ -26,11 +26,9 @@ bool MySocket::StartSocket(QString ip){
     socket->connectToHost(ip,1234);
 
     if (!socket->waitForConnected(3000)){
-
-        qDebug() << "Error: " << socket->errorString();
-        return false;
+        return socket->errorString();
     }
-    return true;
+    return "true";
 }
 
 

@@ -6,12 +6,14 @@ ListWindow::ListWindow(MySocket &s, QWidget *parent) :
     ui(new Ui::ListWindow)
 {
     ui->setupUi(this);
+    socke = &s;
     setWindowTitle("Server wahl");
+    setWindowIcon(QPixmap("images/ship.png"));
+
     connect(ui->StartButton, SIGNAL(clicked()), this, SLOT(startClicked()));
     connect(ui->CancleButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(ui->lineEdit, SIGNAL(textEdited(QString)), this, SLOT(setIP(QString)));
     connect(this, SIGNAL(connected()), parent, SLOT(listWindowClosed()));
-    setWindowIcon(QPixmap("images/ship.png"));
 }
 
 ListWindow::~ListWindow()
@@ -23,11 +25,14 @@ ListWindow::~ListWindow()
 
 void ListWindow::startClicked()
 {
-    if(!socke->StartSocket(ip)){
+    ui->label_2->setText("Verbinden...");
+    QString socketStr = socke->StartSocket(ip);
+    if(socketStr == "true"){
+        qDebug("Wieso springst du immer in diese Schleife?");
         emit connected();
     }
     else
-        ui->label_2->setText("Verbindungsaufbau fehlgeschlagen. Bitte erneut probieren!");
+        ui->label_2->setText(socketStr);
 }
 
 void ListWindow::setIP(QString i)

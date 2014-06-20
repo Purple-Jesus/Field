@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1040</width>
-    <height>641</height>
+    <width>760</width>
+    <height>538</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -84,7 +84,7 @@
         <item>
          <widget class="QPushButton" name="submarineButton">
           <property name="text">
-           <string>Submarine</string>
+           <string>Submarine 5x</string>
           </property>
          </widget>
         </item>
@@ -112,7 +112,7 @@
         <item>
          <widget class="QTableWidget" name="shipTable">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
@@ -120,7 +120,7 @@
           <property name="maximumSize">
            <size>
             <width>240</width>
-            <height>250</height>
+            <height>240</height>
            </size>
           </property>
           <property name="editTriggers">
@@ -164,20 +164,6 @@
           </property>
          </spacer>
         </item>
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
      </layout>
@@ -189,8 +175,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1040</width>
-     <height>27</height>
+     <width>760</width>
+     <height>23</height>
     </rect>
    </property>
   </widget>

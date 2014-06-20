@@ -11,7 +11,7 @@ class MySocket : public QObject
     Q_OBJECT
 public:
     explicit MySocket(QObject *parent = 0);
-    bool StartSocket(QString);
+    QString StartSocket(QString);
 
 public slots:
 

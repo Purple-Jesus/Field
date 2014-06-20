@@ -104,7 +104,6 @@ bool Player::check_lose() {
 
         if(!(subm_ref.get_ship_alive())) {
             dest_ship_counter++;
-            qDebug("Sub: %d",num_subm);
         }
     }
 
@@ -148,7 +147,6 @@ bool Player::check_lose() {
         Player::lost = true;
         std::cout << "All ships were destroyed" << std::endl;
     }
-    qDebug("Zerstoerte Schiffe: %d",dest_ship_counter);
     return Player::lost;
 }
 

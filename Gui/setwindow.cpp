@@ -4,9 +4,14 @@
 #include <QDebug>
 #include "my_headers.h"
 
+// Replace this with the current ini. list to get real ships
+//    left("images/left.png"), hmiddle("images/hmiddle.png"),right("images/right.png"),
+//    top("images/top.png"), vmiddle("images/vmiddle.png"), bottom("images/bottom.png")
 SetWindow::SetWindow(QWidget *parent) :
     QMainWindow(parent),
-    uii(new Ui::SetWindow)
+    uii(new Ui::SetWindow),
+    left("images/white.png"), hmiddle("images/white.png"),right("images/white.png"),
+    top("images/white.png"), vmiddle("images/white.png"), bottom("images/white.png")
 {
     qDebug("    SetWindow");
     //oc = new SquareOccupied(this);
@@ -15,18 +20,21 @@ SetWindow::SetWindow(QWidget *parent) :
     batt=3;
     air=1;
     horizontal = true;
-    sqSize = 45;
     width = 10;
     height = width;
     uii->setupUi(this);
+    sqSize = 47;
+    uii->shipTable->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
     uii->statusbar->showMessage("Plazieren Sie Ihre Schiffe.");
     setWindowIcon(QPixmap("images/ship.png"));
+    setWindowTitle("Ship Happens");
     tableManagement();
     std::string enemyN = "Ganzer Peter";
     std::string playerN = name.toStdString();
     game.change_player_name(playerN);
     game.change_enemy_name(enemyN);
-    playerBoard = game.getBoardRef();
+    //playerBoard = game.getBoardRef();
+    game.getBoardRef().clear_board();
 
     //uii->fieldTable->installEventFilter(eventFilter);
 
@@ -36,11 +44,12 @@ SetWindow::SetWindow(QWidget *parent) :
     connect(uii->submarineButton, SIGNAL(pressed()), this, SLOT(selectSubmarine()));
     connect(uii->battleButton, SIGNAL(clicked()), this, SLOT(selectBattleship()));
     connect(uii->directionButton, SIGNAL(clicked()), this, SLOT(changeDirection()));
-    connect(uii->startButton, SIGNAL(clicked()), this, SLOT(slotSendTable()));
+    //connect(uii->startButton, SIGNAL(clicked()), this, SLOT(slotSendTable()));
     connect(uii->startButton, SIGNAL(clicked()), this, SLOT(checkSet()));
     connect(this, SIGNAL(startGame()), parent, SLOT(startGame()));
     connect(uii->airCarrierButton, SIGNAL(clicked()), this, SLOT(selectAirCarrier()));
     connect(uii->shipTable, SIGNAL(cellPressed(int,int)), this, SLOT(resqueTable(int,int)));
+    connect(uii->shipTable, SIGNAL(itemSelectionChanged()), this, SLOT(selectAll()));
 }
 
 
@@ -72,11 +81,12 @@ void SetWindow::checkSet()
         uii->statusbar->showMessage("Es müssen erst alle Schiffe plaziert werden.",5000);
 }
 
-
+/*
 void SetWindow::slotSendTable()
 {
     emit sendTable(uii->fieldTable);
 }
+*/
 
 // Calls the place_ships function of the game-class
 void SetWindow::setPlayerShip()
@@ -96,12 +106,29 @@ void SetWindow::setPlayerShip()
                         uii->fieldTable->itemAt(i,j)->setIcon(allIcons[index[i][j]]);
                     }
                 }
+                QTableWidgetItem *item[2];
+                for(int i=0;i<2;i++){
+                    qDebug() << "hallo" << i;
+                    if(field[itemList[i]->column()][itemList[i]->row()] == 1){
+                        item[i] = new QTableWidgetItem(QIcon(QPixmap("images/white.png")),"");
+                        uii->fieldTable->setItem(itemList[i]->column(),itemList[i]->row(),item[i]);
+                    }
+                    else{
+                        item[i] = new QTableWidgetItem(QIcon(QPixmap("images/sea.png")),"");
+                        uii->fieldTable->setItem(itemList[i]->column(),itemList[i]->row(),item[i]);
+                    }
+                }
 
                 connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
+
             }
-            else
+            else{
                 game.getPlayer().get_Submarine_ref(sub).set_ship(sq1,sq2);
-            sub -= 1;
+                field[itemList[0]->column()][itemList[0]->row()] = 1;
+                field[itemList[1]->column()][itemList[1]->row()] = 1;
+                sub -= 1;
+                uii->submarineButton->setText("Submarine " + QString::number(sub) + "x");
+            }
             break;
         case 3:
             sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
@@ -217,8 +244,7 @@ void SetWindow::changeDirection()
 // Set the shipTable with an Air Carrier for draging it to the fieldTable
 void SetWindow::selectSubmarine()
 {
-    QPixmap left("images/left.png");
-    QPixmap right("images/right.png");
+
     zaehler = 2;
     //uii->label->setText("Zaehler = " + QString::number(zaehler));
     if(horizontal){
@@ -244,10 +270,10 @@ void SetWindow::selectSubmarine()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setRowHeight(i,sqSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(QPixmap("images/top.png")),"");
+        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
         itemL->setSizeHint(QSize(1,1));
         uii->shipTable->setItem(0,0,itemL);
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(QPixmap("images/bottom.png")),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");
         itemR->setSizeHint(QSize(10,10));
         uii->shipTable->setItem(1,0,itemR);
     }
@@ -260,7 +286,6 @@ void SetWindow::selectSubmarine()
 void SetWindow::selectDestroyer()
 {
     zaehler = 3;
-    uii->label->setText("Zaehler = " + QString::number(zaehler));
     if(horizontal){
         uii->shipTable->setRowCount(1);
         uii->shipTable->setRowHeight(0,sqSize);
@@ -269,11 +294,11 @@ void SetWindow::selectDestroyer()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setColumnWidth(i,sqSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(QPixmap("images/left.png")),"");
+        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
         uii->shipTable->setItem(0,0,itemL);
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(QPixmap("images/hmiddle.png")),"");
+        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(hmiddle),"");
         uii->shipTable->setItem(0,1,itemM);
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(QPixmap("images/right.png")),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");
         uii->shipTable->setItem(0,2,itemR);
 
         uii->shipTable->selectAll();
@@ -287,11 +312,11 @@ void SetWindow::selectDestroyer()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setRowHeight(i,sqSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(QPixmap("images/top.png")),"");
+        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
         uii->shipTable->setItem(0,0,itemL);
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(QPixmap("images/vmiddle.png")),"");
+        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(vmiddle),"");
         uii->shipTable->setItem(0,1,itemM);
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(QPixmap("images/bottom.png")),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");
         uii->shipTable->setItem(0,2,itemR);
 
         uii->shipTable->selectAll();
@@ -303,46 +328,46 @@ void SetWindow::selectDestroyer()
 void SetWindow::selectBattleship()
 {
     zaehler = 4;
-    uii->label->setText("Zaehler = " + QString::number(zaehler));
+    int fieldSize = sqSize;
     if(horizontal){
         uii->shipTable->setRowCount(1);
-        uii->shipTable->setRowHeight(0,sqSize);
+        uii->shipTable->setRowHeight(0,fieldSize);
 
         uii->shipTable->setColumnCount(zaehler);
         for(int i=0;i<zaehler;i++)
-            uii->shipTable->setColumnWidth(i,sqSize);
+            uii->shipTable->setColumnWidth(i,fieldSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(QPixmap("images/left.png")),"");
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(QPixmap("images/hmiddle.png")),"");
-        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(QPixmap("images/hmiddle.png")),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(QPixmap("images/right.png")),"");
+        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
+        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(hmiddle),"");
+        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(hmiddle),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");
         uii->shipTable->setItem(0,0,itemL);
         uii->shipTable->setItem(0,1,itemM);
         uii->shipTable->setItem(0,2,itemM2);
         uii->shipTable->setItem(0,3,itemR);
 
         uii->shipTable->selectAll();
-        uii->shipTable->setIconSize(QSize(sqSize,sqSize));
+        uii->shipTable->setIconSize(QSize(fieldSize,fieldSize));
     }
     else{
         uii->shipTable->setColumnCount(1);
-        uii->shipTable->setColumnWidth(0,sqSize);
+        uii->shipTable->setColumnWidth(0,fieldSize);
 
         uii->shipTable->setRowCount(zaehler);
         for(int i=0;i<zaehler;i++)
-            uii->shipTable->setRowHeight(i,sqSize);
+            uii->shipTable->setRowHeight(i,fieldSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(QPixmap("images/top.png")),"");
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(QPixmap("images/vmiddle.png")),"");
-        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(QPixmap("images/vmiddle.png")),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(QPixmap("images/bottom.png")),"");
+        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
+        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(vmiddle),"");
+        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(vmiddle),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");
         uii->shipTable->setItem(0,0,itemL);
         uii->shipTable->setItem(0,1,itemM);
         uii->shipTable->setItem(0,2,itemM2);
         uii->shipTable->setItem(0,3,itemR);
 
         uii->shipTable->selectAll();
-        uii->shipTable->setIconSize(QSize(sqSize,sqSize));
+        uii->shipTable->setIconSize(QSize(fieldSize,fieldSize));
     }
 }
 
@@ -350,7 +375,6 @@ void SetWindow::selectBattleship()
 void SetWindow::selectAirCarrier()
 {
     zaehler = 5;
-    uii->label->setText("Zaehler = " + QString::number(zaehler));
     if(horizontal){
         uii->shipTable->setRowCount(1);
         uii->shipTable->setRowHeight(0,sqSize);
@@ -359,11 +383,11 @@ void SetWindow::selectAirCarrier()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setColumnWidth(i,sqSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(QPixmap("images/left.png")),"");
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(QPixmap("images/hmiddle.png")),"");
-        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(QPixmap("images/hmiddle.png")),"");
-        QTableWidgetItem *itemM3 = new QTableWidgetItem(QIcon(QPixmap("images/hmiddle.png")),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(QPixmap("images/right.png")),"");
+        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
+        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(hmiddle),"");
+        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(hmiddle),"");
+        QTableWidgetItem *itemM3 = new QTableWidgetItem(QIcon(hmiddle),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");
         uii->shipTable->setItem(0,0,itemL);
         uii->shipTable->setItem(0,1,itemM);
         uii->shipTable->setItem(0,2,itemM2);
@@ -381,11 +405,11 @@ void SetWindow::selectAirCarrier()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setRowHeight(i,sqSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(QPixmap("images/top.png")),"");
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(QPixmap("images/vmiddle.png")),"");
-        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(QPixmap("images/vmiddle.png")),"");
-        QTableWidgetItem *itemM3 = new QTableWidgetItem(QIcon(QPixmap("images/vmiddle.png")),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(QPixmap("images/bottom.png")),"");
+        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
+        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(vmiddle),"");
+        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(vmiddle),"");
+        QTableWidgetItem *itemM3 = new QTableWidgetItem(QIcon(vmiddle),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");
         uii->shipTable->setItem(0,0,itemL);
         uii->shipTable->setItem(0,1,itemM);
         uii->shipTable->setItem(0,2,itemM2);
@@ -423,6 +447,7 @@ void SetWindow::tableManagement()
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
             index[i][j] = width * i + j;
+            field[i][j] = 0;
         }
     }
 
@@ -436,7 +461,8 @@ void SetWindow::tableManagement()
         }
     }
     uii->fieldTable->setDragDropMode(QAbstractItemView::DropOnly);
-    uii->fieldTable->setIconSize(QSize(sqSize+3,sqSize+3));
+    uii->fieldTable->setIconSize(QSize(sqSize,sqSize));
+
 }
 
 /**
@@ -465,7 +491,6 @@ void SetWindow::showItemList()
     for(int i=0;i<itemList.count();i++){
         str += "(" + QString::number(itemList[i]->column()) + "," + QString::number(itemList[i]->row()) + ") - ";
     }
-    uii->label->setText(str);
 }
 
 
@@ -477,4 +502,11 @@ Game &SetWindow::getGameRef()
 QTableWidget* SetWindow::getTable()
 {
     return uii->fieldTable;
+}
+
+void SetWindow::selectAll()
+{
+    int rows = uii->shipTable->rowCount();
+    int columns = uii->shipTable->columnCount();
+    uii->shipTable->setRangeSelected(QTableWidgetSelectionRange(0,0,rows,columns),true);
 }

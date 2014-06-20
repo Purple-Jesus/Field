@@ -5,6 +5,7 @@
 #include <QString>
 #include <QEvent>
 #include <QTableWidget>
+#include <QPixmap>
 #include "game.h"
 #include "player.h"
 
@@ -45,6 +46,13 @@ private:
     QList<QTableWidgetItem*> itemList;
     QList<QIcon> allIcons;
     QTableWidget rTable;
+    QPixmap left;
+    QPixmap hmiddle;
+    QPixmap right;
+    QPixmap top;
+    QPixmap vmiddle;
+    QPixmap bottom;
+    int field[10][10];
     //SquareOccupied *oc;
 
     void tableManagement();
@@ -53,11 +61,12 @@ private:
 
 
 signals:
-    void sendTable(QTableWidget *);
+    //void sendTable(QTableWidget *);
     void startGame();
 
 
-public slots:
+private slots:
+    void selectAll();
     void getName(QString);
     void selectSubmarine();
     void selectDestroyer();
@@ -67,10 +76,10 @@ public slots:
     void showItemList();
     void setPlayerShip();
     void changeDirection();
-    void slotSendTable();
+    //void slotSendTable();
     void checkSet();
     void resqueTable(int a, int b);
-    //bool eventFilter(QObject *, QEvent *);
+
 
 };
 

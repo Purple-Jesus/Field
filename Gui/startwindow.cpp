@@ -9,7 +9,6 @@ StartWindow::StartWindow(QWidget *parent) :
     qDebug("StartWindow");
     setW = new SetWindow(this);
     ui->startGameButton->setAutoDefault(true);
-
     connect(ui->lineEdit, SIGNAL(textEdited(QString)), this, SLOT(getName(QString)));
     connect(ui->startGameButton, SIGNAL(clicked()), this, SLOT(openGame()));
     connect(ui->joinGameButton, SIGNAL(clicked()), this, SLOT(joinGame()));
@@ -27,13 +26,13 @@ StartWindow::~StartWindow()
 void StartWindow::getName(QString n)
 {
     name = n;
-    setW->setWindowTitle("Ship Happens - " + name);
+    setW->setWindowTitle("Ship Happens");
 }
 
 void StartWindow::openGame()
 {
     ui->statusBar->showMessage("Wait for network stuff.");
-    // call network functions to host a game
+    server.startServer();
     host = true;
     setW->show();
     hide();
@@ -45,7 +44,6 @@ void StartWindow::joinGame()
     // call network functions to join a game
     host = false;
     listW->show();
-
     hide();
 }
 
@@ -59,7 +57,7 @@ void StartWindow::listWindowClosed()
 void StartWindow::startGame()
 {
     setW->getGameRef().player_print_boards();
-    playW = new PlayWindow(setW->getTable(),setW->getGameRef(), this);
+    playW = new PlayWindow(setW->getGameRef(), this);
     connect(this, SIGNAL(setStartActivity(bool)), playW, SLOT(getStartActivity(bool)));
     setW->close();
     //playW->setGameRef((setW->getGameRef()));
@@ -70,5 +68,9 @@ void StartWindow::startGame()
 
 void StartWindow::revenge()
 {
-    int i=0;
+    playW->close();
+    delete playW;
+    show();
 }
+
+

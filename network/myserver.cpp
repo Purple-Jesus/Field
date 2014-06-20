@@ -8,14 +8,7 @@ MyServer::MyServer(QObject *parent) :
 
     connect(server,SIGNAL(newConnection()),this,SLOT(newConnection()));
 
-    if (!server->listen(QHostAddress::Any,1234)){
 
-        qDebug() << "Server could not start!";
-    }
-    else{
-
-        qDebug() << "Server started";
-    }
 }
 
 void MyServer::newConnection(){
@@ -28,4 +21,16 @@ void MyServer::newConnection(){
     socket->waitForBytesWritten(1000);
 
     socket->close();
+}
+
+void MyServer::startServer()
+{
+    if (!server->listen(QHostAddress::Any,1234)){
+
+        //qDebug() << "Server could not start!";
+    }
+    else{
+
+        //qDebug() << "Server started";
+    }
 }
