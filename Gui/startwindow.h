@@ -32,6 +32,7 @@ private:
     MyServer server;
     MySocket socket;
     bool host;
+    int numb;
 
 signals:
     void setStartActivity(bool);

@@ -1,18 +1,20 @@
 #include "playwindow.h"
 #include "ui_playwindow.h"
 
-PlayWindow::PlayWindow(Game _game, QWidget *parent) :
+PlayWindow::PlayWindow(bool h, Game _game, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::PlayWindow),
     game(_game),
     playerBoard(game.getBoardRef()),
     enemyBoard(game.getEnemyBoardRef()),
-    black(QColor(0,0,0)), red(QColor(255,0,0))
+    black(QColor(0,0,0)), red(QColor(255,0,0)),
+    host(h)
 {
     qDebug("    Playwindow");
     ui->setupUi(this);
-    game.enemy_set_ship_test();
+    //game.enemy_set_ship_test();
     //playerTmp = table;
+    game.getEnemyBoardRef() = game.getBoardRef();
     ui->centralwidget->setWindowTitle("Ship Happens - " + QString::fromStdString(game.get_player_name()));
     ui->label_2->setText("Gewaesser von " + QString::fromStdString(game.get_enemy_name()));
     width = 10;
@@ -21,6 +23,8 @@ PlayWindow::PlayWindow(Game _game, QWidget *parent) :
     pen.setWidth(10);
     pen.setJoinStyle(Qt::RoundJoin);
     tableManagement();
+    setWindowTitle("Ship Happens");
+
     connect(ui->enemyTable, SIGNAL(cellClicked(int,int)), this, SLOT(setBomb(int,int)));
     connect(ui->playerTable, SIGNAL(cellClicked(int,int)), this, SLOT(getBombed(int,int)));
     connect(this, SIGNAL(quitSignal()), parent, SLOT(revenge()));
@@ -40,7 +44,7 @@ void PlayWindow::revenge()
 
 void PlayWindow::setBomb(int r, int c)
 {
-    if(game.getEnemyState()){
+    if(game.getPlayerState()){
         ui->statusbar->showMessage("Der andere Spieler ist am Zug.",4000);
         return;
     }
@@ -51,46 +55,16 @@ void PlayWindow::setBomb(int r, int c)
     }
 
     int size = ui->enemyTable->iconSize().height();
-    QImage temp;
+    QImage temp = QImage("images/white");
     if(enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->get_square_set()){
-        temp = QImage("images/white.png");
-        pen.setColor(red);
+        pen.setColor(Qt::black);
         painter.begin(&temp);
         painter.setPen(pen);
-        painter.drawPoint(((size/2-0.5)),((size/2-0.5)));
+        for(int i=0;i<temp.height();i++)
+            for(int j=0;j<temp.width();j++){
+                painter.drawPoint(i,j);
+            }
         painter.end();
-        ui->statusbar->showMessage("Yeaaaayyy das war der Gegner.",4000);
-        //enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
-        game.bomb_square((size_t)(c+1),(size_t)(r+1));
-        if(!game.change_activity_status()){
-            endD = new EndDialog(game.get_player_name(),true,this);
-            endD->show();
-        }
-        game.change_activity_status();
-        //game.getPlayer().print_field();
-        //game.getPlayer().print_ships();
-    }
-    else{
-        temp = QImage("images/sea.png");
-        pen.setColor(black);
-        painter.begin(&temp);
-        painter.setPen(pen);
-        painter.drawPoint(((size/2)-0.5),((size/2)-0.5));
-        painter.end();
-        ui->statusbar->showMessage("Das war leider nur Wasser.",4000);
-        enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
-        game.change_activity_status();
-
-    }
-    ui->enemyTable->setItem(r,c,new QTableWidgetItem(QIcon(QPixmap::fromImage(temp)),"",1000));
-}
-
-void PlayWindow::getBombed(int r, int c)
-{
-    int size = ui->enemyTable->iconSize().height();
-    QImage temp;
-    if(enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->get_square_set()){
-        temp = QImage("images/white.png");
         pen.setColor(red);
         painter.begin(&temp);
         painter.setPen(pen);
@@ -108,18 +82,85 @@ void PlayWindow::getBombed(int r, int c)
         //game.getPlayer().print_ships();
     }
     else{
-        temp = QImage("images/sea.png");
+        pen.setColor(Qt::blue);
+        painter.begin(&temp);
+        painter.setPen(pen);
+        for(int i=0;i<temp.height();i++)
+            for(int j=0;j<temp.width();j++){
+                painter.drawPoint(i,j);
+            }
+        painter.end();
+        pen.setColor(black);
+        painter.begin(&temp);
+        painter.setPen(pen);
+        painter.drawPoint(((size/2)-0.5),((size/2)-0.5));
+        painter.end();
+        ui->statusbar->showMessage("Das war leider nur Wasser.",4000);
+        enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
+        game.change_activity_status();
+
+    }
+    temp.scaledToHeight(5);
+    temp.scaledToWidth(5);
+    //ui->enemyTable->setItem(r,c,new QTableWidgetItem(QIcon(QPixmap::fromImage(temp)),"",1000));
+    ui->enemyTable->item(r,c)->setBackground(temp);
+}
+
+
+void PlayWindow::getBombed(int r, int c)
+{
+    if(game.getPlayerState()){
+        ui->statusbar->showMessage("Der andere Spieler ist am Zug.",4000);
+        return;
+    }
+
+    int size = ui->enemyTable->iconSize().height();
+    QImage temp = QImage("images/sea.png");
+    if(playerBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->get_square_set()){
+        pen.setColor(Qt::black);
+        painter.begin(&temp);
+        painter.setPen(pen);
+        for(int i=0;i<temp.height();i++)
+            for(int j=0;j<temp.width();j++){
+                painter.drawPoint(i,j);
+            }
+        painter.end();
+        pen.setColor(red);
+        painter.begin(&temp);
+        painter.setPen(pen);
+        painter.drawPoint(((size/2-0.5)),((size/2-0.5)));
+        painter.end();
+        ui->statusbar->showMessage("Yeaaaayyy das war der Gegner.",4000);
+        //enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
+        game.bomb_square((size_t)(c+1),(size_t)(r+1));
+        if(game.change_activity_status()){
+            endD = new EndDialog(game.get_player_name(),true,this);
+            endD->show();
+        }
+        game.change_activity_status();
+        //game.getPlayer().print_field();
+        //game.getPlayer().print_ships();
+    }
+    else{
+        pen.setColor(Qt::blue);
+        painter.begin(&temp);
+        painter.setPen(pen);
+        for(int i=0;i<temp.height();i++)
+            for(int j=0;j<temp.width();j++){
+                painter.drawPoint(i,j);
+            }
+        painter.end();
         pen.setColor(black);
         painter.begin(&temp);
         painter.setPen(pen);
         painter.drawPoint(((size/2)-0.5),((size/2)-0.5));
         painter.end();
         ui->statusbar->showMessage("Das war leider nur Wasser.");
-        enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
+        playerBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
         game.change_activity_status();
 
     }
-    ui->enemyTable->setItem(r,c,new QTableWidgetItem(QIcon(QPixmap::fromImage(temp)),"",1000));
+    ui->playerTable->item(r,c)->setBackground(QBrush(temp));
 }
 
 // Set the size, headernames of the rows and columns and fills the enemyTable with sea-Items
@@ -163,24 +204,25 @@ void PlayWindow::tableManagement()
                 if(k == 1){
 
                     if(playerBoard.get_Square_ptr(j+1, i+1)->get_square_set()){
-                        QTableWidgetItem *tempItem = new QTableWidgetItem(QIcon("images/white.png"),"",1000);
+                        //QTableWidgetItem *tempItem = new QTableWidgetItem(QIcon("images/white.png"),"",1000);
+                        QTableWidgetItem *tempItem = new QTableWidgetItem();
+                        tempItem->setBackgroundColor(Qt::black);
                         table->setItem(i,j,tempItem);
                         table->itemAt(i,j)->setSizeHint(QSize(sqSize,sqSize));
 
                     }
                     else{
-                        QTableWidgetItem *tempItem = new QTableWidgetItem(QIcon(sea),"",1000);
+                        //QTableWidgetItem *tempItem = new QTableWidgetItem(QIcon(sea),"",1000);
+                        QTableWidgetItem *tempItem = new QTableWidgetItem();
+                        tempItem->setBackgroundColor(Qt::blue);
                         table->setItem(i,j,tempItem);
                         table->itemAt(i,j)->setSizeHint(QSize(sqSize,sqSize));
                     }
-                    /* // Hier wird die info über die squares benötig ob anfang ende und ob horizontal oder vertikal
-                       // Oder die anfangspunkte, richtungen, länge der einzelnen schiffe
-                    QTableWidgetItem *item = new QTableWidgetItem(playerTmp->itemAt(i,j)->icon(),"",1000);
-                    table->setItem(i,j,item);
-                    */
                 }
                 else{
-                    QTableWidgetItem *tempItem = new QTableWidgetItem(QIcon(sea),"",1000);
+                    //QTableWidgetItem *tempItem = new QTableWidgetItem(QIcon(sea),"",1000);
+                    QTableWidgetItem *tempItem = new QTableWidgetItem();
+                    tempItem->setBackgroundColor(Qt::blue);
                     table->setItem(i,j,tempItem);
                     table->itemAt(i,j)->setSizeHint(QSize(sqSize,sqSize));
                 }
@@ -191,11 +233,13 @@ void PlayWindow::tableManagement()
     }
 }
 
+/*
 void PlayWindow::getStartActivity(bool host)
 {
     qDebug("    getStartActivity");
     game.setStartActivity(host);
 }
+*/
 
 void PlayWindow::quitGame()
 {

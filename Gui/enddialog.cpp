@@ -15,6 +15,8 @@ EndDialog::EndDialog(std::string name, bool win, QWidget *parent) :
         ui->picture->setPixmap(QPixmap("images/sad.png"));
         ui->label->setText("Tut mir leid " + QString::fromStdString(name) + ", aber du hattest heute scheinbar kein Glueck");
     }
+
+    setWindowTitle("Lust auf eine Revange?");
     connect(ui->pushButton, SIGNAL(clicked()), parent, SLOT(quitGame()));
     connect(ui->pushButton_2, SIGNAL(clicked()), parent, SLOT(revenge()));
 }

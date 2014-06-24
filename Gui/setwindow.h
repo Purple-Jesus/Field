@@ -23,6 +23,8 @@ public:
 
     Game &getGameRef();
     QTableWidget *getTable();
+    //void clearTable();
+    void setHost(bool h);
 
 
 private:
@@ -53,6 +55,8 @@ private:
     QPixmap vmiddle;
     QPixmap bottom;
     int field[10][10];
+    bool host;
+    bool occupied;
     //SquareOccupied *oc;
 
     void tableManagement();
@@ -64,10 +68,11 @@ signals:
     //void sendTable(QTableWidget *);
     void startGame();
 
+public slots:
+
 
 private slots:
-    void selectAll();
-    void getName(QString);
+    void getEnemyName(QString);
     void selectSubmarine();
     void selectDestroyer();
     void selectBattleship();
@@ -76,9 +81,8 @@ private slots:
     void showItemList();
     void setPlayerShip();
     void changeDirection();
-    //void slotSendTable();
     void checkSet();
-    void resqueTable(int a, int b);
+    //void resqueTable(int a, int b);
 
 
 };

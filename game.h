@@ -31,6 +31,8 @@ class Game {
 private:
    Player player;   /**< this is going to be the player using the device*/
    Player enemy;    /**< this is the second player later on connected via Network*/
+   Board enemy_board; /**< in this board the information of the enemy board will be saved*/
+   char squares [];
 
 protected:
 
@@ -52,7 +54,6 @@ protected:
 
 public:
     Game();
-    //Game(Insert Network functionality here);
     ~Game();
 
     void init_game();
@@ -68,12 +69,11 @@ public:
     void bomb_square(size_t _x, size_t _y);
     bool place_ships(Square* _sq1, Square* _sq2, Square* sq3 = NULL, Square* _sq4 = NULL, Square* _sq5 = NULL);
 
-    Board& getBoardRef();                  //FF 02.06
-    Board& getEnemyBoardRef();            //FF 10.06
-    bool getEnemyState();                //FF 10.06
-    bool getPlayerState();              //FF 10.06
-    void setStartActivity(bool);       //FF 15.06
-    Player& getPlayer();               //FF 19.06
+    /*
+     * Network
+     */
+    void receive_enemy_board_from_network(char* squares);
+    char* send_board_to_network(char *squares);
 
 # ifndef GRAPHIC
     // help functions for terminal debugging
@@ -93,6 +93,13 @@ public:
     void player_print_ships();
     void enemy_print_ships();
 # endif // GRAPHIC
+
+    Board& getBoardRef();                  // FF GUI1
+    Board& getEnemyBoardRef();            // FF GUI1
+    bool getEnemyState();                // FF GUI1
+    bool getPlayerState();              // FF GUI1
+    void setStartActivity(bool);       // FF GUI1
+    Player& getPlayer();              // FF GUI1
 
 };
 

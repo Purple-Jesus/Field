@@ -146,7 +146,6 @@ void Destroyer::reset_ship() {
  * char represents a square the ship is placed on.
  */
 void Destroyer::print_ship() {
-    if(Destroyer::set){
     for(size_t count = 0; count < (Destroyer::lenght); count++) {
         if (Destroyer::position[count]->get_square_hit()) {
             std::cout << "X";
@@ -156,5 +155,4 @@ void Destroyer::print_ship() {
         }
     }
     std::cout << std::endl;
-}
 }

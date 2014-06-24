@@ -58,8 +58,7 @@
  * @param Board::widht = 10
  */
 Board::Board() {
-    Board::lenght = 10;
-    Board::widht = 10;
+
 }
 
 /**
@@ -70,8 +69,7 @@ Board::Board() {
  * @param Board::lenght = _y
  */
 Board::Board(size_t _x, size_t _y) {
-    Board::lenght = _x + 1;
-    Board::widht = _y + 1;
+
 }
 
 
@@ -143,7 +141,7 @@ Square* Board::get_prev(Square* _sq) {
  * Board::get_next_collumn returns a pointer to the square in the next collumn
  */
 Square* Board::get_next_collumn(Square* _sq) {
-    return _sq = _sq + (Board::lenght + 1);
+    return _sq = _sq + (Board::len);
 }
 
 
@@ -154,7 +152,7 @@ Square* Board::get_next_collumn(Square* _sq) {
  * Board::get_prev_collumn returns a pointer to the square in the previous collumn
  */
 Square* Board::get_prev_collumn(Square* _sq) {
-    return _sq = _sq - (Board::lenght + 1);
+    return _sq = _sq - (Board::len);
 }
 
 
@@ -343,6 +341,50 @@ void Board::set_ship(Square* _sq1, Square* _sq2, Square* _sq3, Square* _sq4, Squ
 }
 
 
+/*
+ * Network
+ */
+
+
+/**
+ * @brief Board::send_set_squares
+ * @param squares
+ * @return char[(Board::lenght)*(Board::widht)]
+ * returns a char array that contains the information of set fields
+ */
+char* Board::send_set_squares(char *squares) {
+    for(size_t collumn = 0; collumn < Board::lenght; collumn ++){
+        for(size_t line = 0; line < Board::widht; line++) {
+            if(Board::field[collumn + 1][line + 1].get_square_set()) {
+                squares[(collumn * Board::lenght) + line] = 'X';
+                std::cout << squares << std::endl;
+            }
+            else {
+                squares[(collumn * Board::lenght) + line] = 'O';
+            }
+        }
+    }
+    std::cout << squares << std::endl;
+    return squares;
+}
+
+
+/**
+ * @brief Board::receive_set_squares
+ * @param squares
+ * receives a char array and saves the information in the board
+ */
+void Board::receive_set_squares(char* squares) {
+    for(size_t collumn = 0; collumn < Board::lenght; collumn ++){
+        for(size_t line = 0; line < Board::widht; line++) {
+            if(squares[(collumn * Board::lenght) + line] == 'X') {
+                Board::field[collumn + 1][line + 1].set_square();
+            }
+        }
+    }
+}
+
+
 /**
  * @brief Board::get_Square_ptr
  * This Board member function the x and y parameter are used to get the
@@ -365,6 +407,17 @@ Square* Board::get_Square_ptr(size_t _x, size_t _y) {
  */
 size_t Board::get_lenght() {
     return Board::lenght;
+}
+
+
+/**
+ * @brief Board::get_widht
+ * @return size_t Board::widht
+ *
+ * simple getter function that returns the boards widht (the number of lines)
+ */
+size_t Board::get_widht() {
+    return Board::widht;
 }
 
 

@@ -7,6 +7,7 @@
 // Replace this with the current ini. list to get real ships
 //    left("images/left.png"), hmiddle("images/hmiddle.png"),right("images/right.png"),
 //    top("images/top.png"), vmiddle("images/vmiddle.png"), bottom("images/bottom.png")
+
 SetWindow::SetWindow(QWidget *parent) :
     QMainWindow(parent),
     uii(new Ui::SetWindow),
@@ -14,7 +15,6 @@ SetWindow::SetWindow(QWidget *parent) :
     top("images/white.png"), vmiddle("images/white.png"), bottom("images/white.png")
 {
     qDebug("    SetWindow");
-    //oc = new SquareOccupied(this);
     sub=5;
     dest=4;
     batt=3;
@@ -22,34 +22,34 @@ SetWindow::SetWindow(QWidget *parent) :
     horizontal = true;
     width = 10;
     height = width;
-    uii->setupUi(this);
     sqSize = 47;
+    occupied = false;
+
+    uii->setupUi(this);
     uii->shipTable->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
     uii->statusbar->showMessage("Plazieren Sie Ihre Schiffe.");
     setWindowIcon(QPixmap("images/ship.png"));
     setWindowTitle("Ship Happens");
-    tableManagement();
+
     std::string enemyN = "Ganzer Peter";
     std::string playerN = name.toStdString();
     game.change_player_name(playerN);
     game.change_enemy_name(enemyN);
-    //playerBoard = game.getBoardRef();
-    game.getBoardRef().clear_board();
+    tableManagement();
+    if(host)
+        uii->startButton->setText("Start");
+    else
+        uii->startButton->setText("Bereit");
 
-    //uii->fieldTable->installEventFilter(eventFilter);
-
-    //connect(uii->submarineButton, SIGNAL(clicked()), this, SLOT(setSubmarine()));
     connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
     connect(uii->destroyerButton, SIGNAL(clicked()), this, SLOT(selectDestroyer()));
     connect(uii->submarineButton, SIGNAL(pressed()), this, SLOT(selectSubmarine()));
     connect(uii->battleButton, SIGNAL(clicked()), this, SLOT(selectBattleship()));
     connect(uii->directionButton, SIGNAL(clicked()), this, SLOT(changeDirection()));
-    //connect(uii->startButton, SIGNAL(clicked()), this, SLOT(slotSendTable()));
     connect(uii->startButton, SIGNAL(clicked()), this, SLOT(checkSet()));
     connect(this, SIGNAL(startGame()), parent, SLOT(startGame()));
     connect(uii->airCarrierButton, SIGNAL(clicked()), this, SLOT(selectAirCarrier()));
-    connect(uii->shipTable, SIGNAL(cellPressed(int,int)), this, SLOT(resqueTable(int,int)));
-    connect(uii->shipTable, SIGNAL(itemSelectionChanged()), this, SLOT(selectAll()));
+    connect(uii->shipTable, SIGNAL(itemSelectionChanged()), uii->shipTable, SLOT(selectAll()));
 }
 
 
@@ -60,6 +60,72 @@ SetWindow::~SetWindow()
 
 }
 
+/*
+void SetWindow::clearTable()
+{
+    sub=5;
+    dest=4;
+    batt=3;
+    air=1;
+    disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
+    disconnect(uii->destroyerButton, SIGNAL(clicked()), this, SLOT(selectDestroyer()));
+    disconnect(uii->submarineButton, SIGNAL(pressed()), this, SLOT(selectSubmarine()));
+    disconnect(uii->battleButton, SIGNAL(clicked()), this, SLOT(selectBattleship()));
+    disconnect(uii->directionButton, SIGNAL(clicked()), this, SLOT(changeDirection()));
+    disconnect(uii->startButton, SIGNAL(clicked()), this, SLOT(checkSet()));
+    disconnect(uii->airCarrierButton, SIGNAL(clicked()), this, SLOT(selectAirCarrier()));
+    disconnect(uii->shipTable, SIGNAL(cellPressed(int,int)), this, SLOT(resqueTable(int,int)));
+    disconnect(uii->shipTable, SIGNAL(itemSelectionChanged()), this, SLOT(selectAll()));
+    for(int i=0;i<width;i++){
+        for(int j=0;j<height;j++){
+            qDebug("    clearTable(%d;%d)",i,j);
+            uii->fieldTable->itemAt(i,j)->setIcon(QIcon("images/sea.png"));
+        }
+    }
+    qDebug("     tableManagement");
+    game.getBoardRef().clear_board();
+    qDebug("    end clearTable");
+    connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
+    connect(uii->destroyerButton, SIGNAL(clicked()), this, SLOT(selectDestroyer()));
+    connect(uii->submarineButton, SIGNAL(pressed()), this, SLOT(selectSubmarine()));
+    connect(uii->battleButton, SIGNAL(clicked()), this, SLOT(selectBattleship()));
+    connect(uii->directionButton, SIGNAL(clicked()), this, SLOT(changeDirection()));
+    connect(uii->startButton, SIGNAL(clicked()), this, SLOT(checkSet()));
+    connect(uii->airCarrierButton, SIGNAL(clicked()), this, SLOT(selectAirCarrier()));
+    connect(uii->shipTable, SIGNAL(cellPressed(int,int)), this, SLOT(resqueTable(int,int)));
+    connect(uii->shipTable, SIGNAL(itemSelectionChanged()), this, SLOT(selectAll()));
+}
+*/
+
+// Saves the position of the items witch are changed trough the dropEvent
+void SetWindow::getItems(QTableWidgetItem *item)
+{
+
+    disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
+    /*if(!game.getBoardRef().get_Square_ptr((size_t)item->column()+1, (size_t)item->row()+1)->get_square_set()){
+        qDebug("     getItems1");
+        QTableWidgetItem *newItem = new QTableWidgetItem();
+        newItem->setBackgroundColor(Qt::blue);
+        qDebug("     getItems2");
+        uii->fieldTable->setItem(item->column(),item->row(),newItem);
+        qDebug("     getItems3");
+        occupied = true;
+    }*/
+
+    connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
+    qDebug("     getItems4");
+    itemList << item;
+    if(itemList.size() >= zaehler && !occupied){
+        qDebug("     getItems5");
+        setPlayerShip();
+        qDebug("     getItems6");
+        itemList.clear();
+    }
+    //connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
+}
+
+//? sinnvoll
+/*
 void SetWindow::resqueTable(int a, int b)
 {
     for(int i=0;i<height;i++){
@@ -68,7 +134,9 @@ void SetWindow::resqueTable(int a, int b)
         }
     }
 }
+*/
 
+// checks if all ships are set and emits the startGame() to start the PlayWindow
 void SetWindow::checkSet()
 {
     //if((sub == -1) && (dest == -1) && (batt == -1) && (air == -1))
@@ -88,58 +156,41 @@ void SetWindow::slotSendTable()
 }
 */
 
-// Calls the place_ships function of the game-class
+// Calls the place_ships function of the game-class (logic)
 void SetWindow::setPlayerShip()
 {
+    //disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
     Square *sq1, *sq2, *sq3, *sq4, *sq5;
     sq1 = game.getBoardRef().get_Square_ptr((size_t)itemList[0]->column()+1, (size_t)itemList[0]->row()+1);
+    qDebug("(%d,%d)",itemList[0]->column(),itemList[0]->row());
     sq2 = game.getBoardRef().get_Square_ptr((size_t)itemList[1]->column()+1, (size_t)itemList[1]->row()+1);
-
+    qDebug("(%d,%d)",itemList[1]->column(),itemList[1]->row());
+    qDebug("      setPlayerShip1");
     switch(zaehler){
         case 2:
             if(!game.place_ships(sq1,sq2)){
+                qDebug("      setPlayerShip2.1");
                 uii->statusbar->showMessage("Hier kann das Schiff nicht setzen.",3000);
-                //QTest::qSleep(100);
-                disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
-                for(int i=0;i<height;i++){
-                    for(int j=0;j<width;j++){
-                        uii->fieldTable->itemAt(i,j)->setIcon(allIcons[index[i][j]]);
-                    }
-                }
-                QTableWidgetItem *item[2];
-                for(int i=0;i<2;i++){
-                    qDebug() << "hallo" << i;
-                    if(field[itemList[i]->column()][itemList[i]->row()] == 1){
-                        item[i] = new QTableWidgetItem(QIcon(QPixmap("images/white.png")),"");
-                        uii->fieldTable->setItem(itemList[i]->column(),itemList[i]->row(),item[i]);
-                    }
-                    else{
-                        item[i] = new QTableWidgetItem(QIcon(QPixmap("images/sea.png")),"");
-                        uii->fieldTable->setItem(itemList[i]->column(),itemList[i]->row(),item[i]);
-                    }
-                }
-
-                connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
-
             }
             else{
+                qDebug("      setPlayerShip2.2");
                 game.getPlayer().get_Submarine_ref(sub).set_ship(sq1,sq2);
-                field[itemList[0]->column()][itemList[0]->row()] = 1;
-                field[itemList[1]->column()][itemList[1]->row()] = 1;
+                //field[itemList[0]->column()][itemList[0]->row()] = 1;
+                //field[itemList[1]->column()][itemList[1]->row()] = 1;
                 sub -= 1;
                 uii->submarineButton->setText("Submarine " + QString::number(sub) + "x");
             }
             break;
         case 3:
             sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
+            qDebug("(%d,%d)",itemList[2]->column(),itemList[2]->row());
             if(!game.place_ships(sq1,sq2,sq3))
                 uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",3000);
             else{
                 game.getPlayer().get_Destroyer_ref((size_t)dest).set_ship(sq1,sq2,sq3);
-                if(game.getPlayer().get_Destroyer_ref((size_t)dest).get_ship_set())
-                    uii->statusbar->showMessage("Zerstoerer gesetzt:",2000);
+                dest -= 1;
             }
-            dest -= 1;
+
             break;
         case 4:
             sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
@@ -169,10 +220,42 @@ void SetWindow::setPlayerShip()
             air -= 1;
             break;
     }
-    discon();
+
+    occupied = false;
+    disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
+    //discon();
+    //23.06 BEGIN
+    if(sub == 0){
+        uii->submarineButton->setEnabled(false);
+        uii->shipTable->setColumnCount(0);
+        uii->shipTable->setRowCount(0);
+        sub = -1;
+    }
+    if(dest == 0){
+        uii->destroyerButton->setEnabled(false);
+        uii->shipTable->setColumnCount(0);
+        uii->shipTable->setRowCount(0);
+        dest = -1;
+    }
+    if(batt == 0){
+        uii->battleButton->setEnabled(false);
+        uii->shipTable->setColumnCount(0);
+        uii->shipTable->setRowCount(0);
+        batt = -1;
+    }
+    if(air == 0){
+        uii->airCarrierButton->setEnabled(false);
+        disconnect(this, SLOT(selectAirCarrier()));
+        uii->shipTable->setColumnCount(0);
+        uii->shipTable->setRowCount(0);
+        air = -1;
+    }
+    //23.06 END
+    qDebug("      setPlayerShip3");
+    connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
 }
 
-// Disables the ship-buttons if the max amount of the shiptype is set
+//? Disables the ship-buttons if the max amount of the shiptype is set
 void SetWindow::discon()
 {
     if(sub == 0){
@@ -202,32 +285,15 @@ void SetWindow::discon()
     }
 }
 
-
-// Saves the items witch are changed trough the dropEvent
-void SetWindow::getItems(QTableWidgetItem *item)
-{
-    itemList << item;
-    //allItems << *item;
-    //qDebug("Droped succesfull");
-    if(itemList.size() >= zaehler){
-       // qDebug("Size itemList: %d",itemList.size());
-        showItemList();
-        setPlayerShip();
-        for(int i=0;i<itemList.size();i++){
-        //    itemList[i]->setFlags(Qt::NoItemFlags);
-        }
-        itemList.clear();
-    }
-}
-
 // Slot to get the name of the player from the startWindow
-void SetWindow::getName(QString n)
+void SetWindow::getEnemyName(QString n)
 {
     name = n;
     setWindowTitle("Ship Happens - " + name);
     //me.change_player_names(name.toStdString(), "Netzwerkname");
 }
 
+// Change the direction of the ships and the string of the directionButton
 void SetWindow::changeDirection()
 {
     if(uii->directionButton->text() == "Horizontal"){
@@ -238,7 +304,16 @@ void SetWindow::changeDirection()
         uii->directionButton->setText("Horizontal");
         horizontal = true;
     }
-    refresh(zaehler);
+    switch(zaehler){
+        case 2: selectSubmarine();
+        break;
+        case 3: selectDestroyer();
+        break;
+        case 4: selectBattleship();
+        break;
+        case 5: selectAirCarrier();
+        break;
+    }
 }
 
 // Set the shipTable with an Air Carrier for draging it to the fieldTable
@@ -249,17 +324,21 @@ void SetWindow::selectSubmarine()
     //uii->label->setText("Zaehler = " + QString::number(zaehler));
     if(horizontal){
         uii->shipTable->setRowCount(1);
-        uii->shipTable->setRowHeight(0,sqSize);
+        //uii->shipTable->setRowHeight(0,sqSize);
 
         uii->shipTable->setColumnCount(zaehler);
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setColumnWidth(i,sqSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
-        itemL->setSizeHint(QSize(1,1));
+        //QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
+        QTableWidgetItem *itemL = new QTableWidgetItem();
+        itemL->setBackgroundColor(Qt::black);
+        //itemL->setSizeHint(QSize(1,1));
         uii->shipTable->setItem(0,0,itemL);
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");
-        itemR->setSizeHint(QSize(10,10));
+        //QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem();
+        itemR->setBackgroundColor(Qt::black);
+        //itemR->setSizeHint(QSize(10,10));
         uii->shipTable->setItem(0,1,itemR);
     }
     else{
@@ -270,11 +349,13 @@ void SetWindow::selectSubmarine()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setRowHeight(i,sqSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
-        itemL->setSizeHint(QSize(1,1));
+        QTableWidgetItem *itemL = new QTableWidgetItem();
+        itemL->setBackgroundColor(Qt::black);
+        //itemL->setSizeHint(QSize(1,1));
         uii->shipTable->setItem(0,0,itemL);
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");
-        itemR->setSizeHint(QSize(10,10));
+        QTableWidgetItem *itemR = new QTableWidgetItem();
+        itemR->setBackgroundColor(Qt::black);
+        //itemR->setSizeHint(QSize(10,10));
         uii->shipTable->setItem(1,0,itemR);
     }
     uii->shipTable->selectAll();
@@ -294,11 +375,17 @@ void SetWindow::selectDestroyer()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setColumnWidth(i,sqSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
+        //QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
+        QTableWidgetItem *itemL = new QTableWidgetItem();
+        itemL->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,0,itemL);
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(hmiddle),"");
+        //QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(hmiddle),"");
+        QTableWidgetItem *itemM = new QTableWidgetItem();
+        itemM->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,1,itemM);
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");
+        //QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem();
+        itemR->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,2,itemR);
 
         uii->shipTable->selectAll();
@@ -312,11 +399,17 @@ void SetWindow::selectDestroyer()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setRowHeight(i,sqSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
+        //QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
+        QTableWidgetItem *itemL = new QTableWidgetItem();
+        itemL->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,0,itemL);
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(vmiddle),"");
+        //QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(vmiddle),"");
+        QTableWidgetItem *itemM = new QTableWidgetItem();
+        itemM->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,1,itemM);
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");
+        //QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem();
+        itemR->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,2,itemR);
 
         uii->shipTable->selectAll();
@@ -337,10 +430,19 @@ void SetWindow::selectBattleship()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setColumnWidth(i,fieldSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
+
+        /*QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
         QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(hmiddle),"");
         QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(hmiddle),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");*/
+        QTableWidgetItem *itemL = new QTableWidgetItem();
+        itemL->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemM = new QTableWidgetItem();
+        itemM->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemM2 = new QTableWidgetItem();
+        itemM2->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemR = new QTableWidgetItem();
+        itemR->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,0,itemL);
         uii->shipTable->setItem(0,1,itemM);
         uii->shipTable->setItem(0,2,itemM2);
@@ -357,10 +459,18 @@ void SetWindow::selectBattleship()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setRowHeight(i,fieldSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
+        /*QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
         QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(vmiddle),"");
         QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(vmiddle),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");*/
+        QTableWidgetItem *itemL = new QTableWidgetItem();
+        itemL->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemM = new QTableWidgetItem();
+        itemM->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemM2 = new QTableWidgetItem();
+        itemM2->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemR = new QTableWidgetItem();
+        itemR->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,0,itemL);
         uii->shipTable->setItem(0,1,itemM);
         uii->shipTable->setItem(0,2,itemM2);
@@ -383,11 +493,21 @@ void SetWindow::selectAirCarrier()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setColumnWidth(i,sqSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
+        /*QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
         QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(hmiddle),"");
         QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(hmiddle),"");
         QTableWidgetItem *itemM3 = new QTableWidgetItem(QIcon(hmiddle),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");*/
+        QTableWidgetItem *itemL = new QTableWidgetItem();
+        itemL->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemM = new QTableWidgetItem();
+        itemM->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemM2 = new QTableWidgetItem();
+        itemM2->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemM3 = new QTableWidgetItem();
+        itemM3->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemR = new QTableWidgetItem();
+        itemR->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,0,itemL);
         uii->shipTable->setItem(0,1,itemM);
         uii->shipTable->setItem(0,2,itemM2);
@@ -405,11 +525,21 @@ void SetWindow::selectAirCarrier()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setRowHeight(i,sqSize);
 
-        QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
+        /*QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
         QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(vmiddle),"");
         QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(vmiddle),"");
         QTableWidgetItem *itemM3 = new QTableWidgetItem(QIcon(vmiddle),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");
+        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");*/
+        QTableWidgetItem *itemL = new QTableWidgetItem();
+        itemL->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemM = new QTableWidgetItem();
+        itemM->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemM2 = new QTableWidgetItem();
+        itemM2->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemM3 = new QTableWidgetItem();
+        itemM3->setBackgroundColor(Qt::black);
+        QTableWidgetItem *itemR = new QTableWidgetItem();
+        itemR->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,0,itemL);
         uii->shipTable->setItem(0,1,itemM);
         uii->shipTable->setItem(0,2,itemM2);
@@ -421,10 +551,10 @@ void SetWindow::selectAirCarrier()
     }
 }
 
-
 // Set the size, headernames of the rows and columns and fills the fieldTable with sea-Items
 void SetWindow::tableManagement()
 {
+    uii->shipTable->setStyleSheet("selection-background-color: transparent;");
     uii->fieldTable->setAcceptDrops(true);
     uii->fieldTable->setRowCount(width);
     uii->fieldTable->setColumnCount(height);
@@ -443,21 +573,17 @@ void SetWindow::tableManagement()
     for(int i=0;i<width;i++)
         uii->fieldTable->setRowHeight(i,sqSize);
 
-    // fills the index[][] with the position of the Squareg in the label list
-    for(int i=0;i<width;i++){
-        for(int j=0;j<height;j++){
-            index[i][j] = width * i + j;
-            field[i][j] = 0;
-        }
-    }
-
     // fills the fields of the table with squareg items
     QPixmap pixmap("images/sea.png");
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
-            QTableWidgetItem *item = new QTableWidgetItem(QIcon(pixmap)," ",1000);
+            //QTableWidgetItem *item = new QTableWidgetItem(QIcon(pixmap)," ",1000);
+            QTableWidgetItem *item = new QTableWidgetItem();
+            item->setBackgroundColor(Qt::blue);
             uii->fieldTable->setItem(i,j,item);
             uii->fieldTable->itemAt(i,j)->setSizeHint(QSize(sqSize,sqSize));
+            //index[i][j] = width * i + j;
+            field[i][j] = 0;
         }
     }
     uii->fieldTable->setDragDropMode(QAbstractItemView::DropOnly);
@@ -465,26 +591,7 @@ void SetWindow::tableManagement()
 
 }
 
-/**
- * @brief SetWindow::refresh
- * function so update the shipTable after changing the direction of a ship
- * @param len
- **/
-void SetWindow::refresh(int len)
-{
-    switch(len){
-        case 2: selectSubmarine();
-        break;
-        case 3: selectDestroyer();
-        break;
-        case 4: selectBattleship();
-        break;
-        case 5: selectAirCarrier();
-        break;
-    }
-}
-
-
+// shows the ItemList on the terminal
 void SetWindow::showItemList()
 {
     QString str;
@@ -493,20 +600,25 @@ void SetWindow::showItemList()
     }
 }
 
-
+// returns the set game reference
 Game &SetWindow::getGameRef()
 {
     return game;
 }
 
+// returns a pointer to the fieldTable
 QTableWidget* SetWindow::getTable()
 {
     return uii->fieldTable;
 }
 
-void SetWindow::selectAll()
+// get the information form the StartWindow if this window is host or not
+void SetWindow::setHost(bool h)
 {
-    int rows = uii->shipTable->rowCount();
-    int columns = uii->shipTable->columnCount();
-    uii->shipTable->setRangeSelected(QTableWidgetSelectionRange(0,0,rows,columns),true);
+    host = h;
+
+    if(host)
+        uii->startButton->setText("Start");
+    else
+        uii->startButton->setText("Bereit");
 }

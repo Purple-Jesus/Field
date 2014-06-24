@@ -12,6 +12,7 @@
   * Changelog:
   * 140415	MP	@all	Definition of the Player class
   * 140416	MP	@all	Implementing Memberfunc of th Player class
+  * 140622  FF  GUI1    Add some interface function for the GUI
   *
   ***********************************************************************************/
 
@@ -128,13 +129,15 @@ bool Game::change_activity_status() {
     if(Game::player.get_active()) {
         Game::player.set_not_active();
         Game::enemy.set_active();
-        return Game::enemy.get_lost();          // FF 16.05 return true
+        //return true;  // Origin
+        return Game::enemy.get_lost();          // FF GUI1
     }
 
     else if (Game::enemy.get_active()) {
         Game::enemy.set_not_active();
         Game::player.set_active();
-        return Game::player.get_lost();         // FF 16.05 return true
+        //return true;  // Origin
+        return Game::player.get_lost();         // FF GUI1
     }
     return false;
 }
@@ -172,6 +175,33 @@ bool Game::place_ships(Square* _sq1, Square* _sq2, Square* _sq3, Square* _sq4, S
  */
 void Game::bomb_square(size_t _x, size_t _y) {
     Game::player.bomb_enemy_field(Game::enemy.return_board_ref(), _x, _y);
+    // Game::enemy_board.hit_square(enemy_board.get_Square_ptr(_x, _y));
+    /*
+     * Send it to the enemy Board from here
+     */
+}
+
+
+/*
+ * Network
+ */
+
+/**
+ * @brief Game::receive_enemy_board_from_network
+ * @param squares
+ */
+void Game::receive_enemy_board_from_network(char *squares) {
+    Game::enemy_board.receive_set_squares(squares);
+}
+
+
+/**
+ * @brief Game::send_board_to_network
+ * @param squares
+ * @return
+ */
+char* Game::send_board_to_network(char *squares) {
+    return Game::player.return_board_ref().send_set_squares(squares);
 }
 
 
@@ -993,7 +1023,7 @@ void Game::enemy_set_ship_test() {
      */
     Game::enemy.place_ship(Battleship_t, 1, 5, 3, 6, 3, 7, 3, 8, 3);
     Game::enemy.place_ship(Battleship_t, 2, 5, 5, 5, 6, 5, 7, 5, 8);
-    //Game::enemy.place_ship(Battleship_t, 3, 10, 7, 10, 8, 10, 9, 10, 10);
+    Game::enemy.place_ship(Battleship_t, 3, 10, 7, 10, 8, 10, 9, 10, 10);
 
     /**
      * set the air carrier
@@ -1003,8 +1033,7 @@ void Game::enemy_set_ship_test() {
     Game::enemy.print_field();
 }
 
-
-// Not part of the original game class:
+// GUI1 BEGIN
 Board& Game::getBoardRef()
 {
     return player.return_board_ref();
@@ -1042,4 +1071,4 @@ Player& Game::getPlayer()
     Player &p = Game::player;
     return p;
 }
-
+//GUI1 END

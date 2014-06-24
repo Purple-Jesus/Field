@@ -31,9 +31,12 @@
  */
 class Board {
 private:
-    size_t lenght;          /**< the number of collumns of a board*/
-    size_t widht;           /**< the number of lines of a board*/
-    Square field[11][11];   /**< two dimensional array of Squares [number of collumns][number of lines]*/
+    static const size_t lenght = 10;      /**< the number of collumns of a board*/
+    static const size_t widht = 10;       /**< the number of lines of a board*/
+    static  int const len = lenght + 2;
+    static  int const wid = widht + 2;
+    Square field[len][wid];               /**< two dimensional array of Squares
+                                               [number of collumns][number of lines]*/
 
 protected:
     Square* get_next(Square* _sq);
@@ -56,14 +59,24 @@ public:
 
     Square* get_Square_ptr(size_t _x, size_t _y);
     size_t get_lenght();
+    size_t get_widht();
 
-    // differnt functions for different ship_lenghts
+    /*
+     * differnt functions for different ship_lenghts
+     */
+
     void set_ship(Square* _sq1, Square* _sq2);
     void set_ship(Square* _sq1, Square* _sq2, Square* _sq3);
     void set_ship(Square* _sq1, Square* _sq2, Square* _sq3, Square* _sq4);
     void set_ship(Square* _sq1, Square* _sq2, Square* _sq3 = NULL,
                   Square* _sq4 = NULL, Square* _sq5 = NULL);
 
+    /*
+     * Network
+     */
+
+    char* send_set_squares(char *squares);
+    void  receive_set_squares(char* squares);
 
 
 # ifndef GRAPHIC

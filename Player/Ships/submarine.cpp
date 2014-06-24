@@ -19,7 +19,6 @@
  ***********************************************************************************/
 
 # include "submarine.h"
-#include <QDebug>
 
 /**
  * @brief Submarine::Submarine
@@ -93,8 +92,7 @@ void Submarine::check_ship_stat() {
      * destroyed, the flag Ship::alive will be set to false
      */
      if (comp == (Submarine::lenght)) {
-         //std::cout << "submarine has been destroyed" << std::endl;
-         qDebug("Submarine has been destroyed");
+         std::cout << "submarine has been destroyed" << std::endl;
          Submarine::alive = false;
      }
 }
@@ -130,7 +128,6 @@ void Submarine::reset_ship() {
  * @brief Submarine::print_ship
  */
 void Submarine::print_ship() {
-    if(Submarine::set){
     for(size_t count = 0; count < (Submarine::lenght); count++) {
 
         if (Submarine::position[count]->get_square_hit()) {
@@ -141,5 +138,4 @@ void Submarine::print_ship() {
         }
     }
     std::cout << std::endl;
-}
 }

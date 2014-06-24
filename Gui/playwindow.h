@@ -16,7 +16,7 @@ class PlayWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit PlayWindow(Game _game, QWidget *parent);
+    explicit PlayWindow(bool h, Game _game, QWidget *parent);
     ~PlayWindow();
     
 
@@ -35,6 +35,7 @@ private:
     QPen pen;
     QPainter painter;
     EndDialog *endD;
+    bool host;
 
     void tableManagement();
     void setShips();
@@ -44,7 +45,7 @@ signals:
 
 public slots:
     //void setGameRef(Game &_game);
-    void getStartActivity(bool);
+    //void getStartActivity(bool);
     void setBomb(int a, int b);
     void getBombed(int r, int c);
     void revenge();

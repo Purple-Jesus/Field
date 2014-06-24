@@ -80,7 +80,7 @@
         <item>
          <widget class="QPushButton" name="StartButton">
           <property name="text">
-           <string>Connect</string>
+           <string>Verbinden</string>
           </property>
          </widget>
         </item>
@@ -100,7 +100,7 @@
         <item>
          <widget class="QPushButton" name="CancleButton">
           <property name="text">
-           <string>Cancel</string>
+           <string>Abbrechen</string>
           </property>
          </widget>
         </item>
