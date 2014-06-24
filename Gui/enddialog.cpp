@@ -1,6 +1,13 @@
 #include "enddialog.h"
 #include "ui_enddialog.h"
 
+/**
+ * @brief EndDialog::EndDialog
+ * @param name
+ * @param win
+ * @param parent
+ * Constructor
+ */
 EndDialog::EndDialog(std::string name, bool win, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EndDialog)
@@ -17,10 +24,14 @@ EndDialog::EndDialog(std::string name, bool win, QWidget *parent) :
     }
 
     setWindowTitle("Lust auf eine Revange?");
-    connect(ui->pushButton, SIGNAL(clicked()), parent, SLOT(quitGame()));
+    connect(ui->pushButton, SIGNAL(clicked()), parent, SLOT(close()));
     connect(ui->pushButton_2, SIGNAL(clicked()), parent, SLOT(revenge()));
 }
 
+/**
+ * @brief EndDialog::~EndDialog
+ * Destructor
+ */
 EndDialog::~EndDialog()
 {
     qDebug("        ~EndDialog");

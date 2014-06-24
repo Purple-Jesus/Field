@@ -8,6 +8,11 @@
 //    left("images/left.png"), hmiddle("images/hmiddle.png"),right("images/right.png"),
 //    top("images/top.png"), vmiddle("images/vmiddle.png"), bottom("images/bottom.png")
 
+/**
+ * @brief SetWindow::SetWindow
+ * @param parent
+ * Constructor of the SetWindow-class
+ */
 SetWindow::SetWindow(QWidget *parent) :
     QMainWindow(parent),
     uii(new Ui::SetWindow),
@@ -53,6 +58,10 @@ SetWindow::SetWindow(QWidget *parent) :
 }
 
 
+/**
+ * @brief SetWindow::~SetWindow
+ * Deconstructor
+ */
 SetWindow::~SetWindow()
 {
     delete uii;
@@ -136,7 +145,10 @@ void SetWindow::resqueTable(int a, int b)
 }
 */
 
-// checks if all ships are set and emits the startGame() to start the PlayWindow
+/**
+ * @brief SetWindow::checkSet
+ * checks if all ships are set and emits the startGame() to start the PlayWindow
+ */
 void SetWindow::checkSet()
 {
     //if((sub == -1) && (dest == -1) && (batt == -1) && (air == -1))
@@ -156,7 +168,11 @@ void SetWindow::slotSendTable()
 }
 */
 
-// Calls the place_ships function of the game-class (logic)
+
+/**
+ * @brief SetWindow::setPlayerShip
+ * calls the place_ships function of the game-class (logic)
+ */
 void SetWindow::setPlayerShip()
 {
     //disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
@@ -256,6 +272,7 @@ void SetWindow::setPlayerShip()
 }
 
 //? Disables the ship-buttons if the max amount of the shiptype is set
+/*
 void SetWindow::discon()
 {
     if(sub == 0){
@@ -284,6 +301,7 @@ void SetWindow::discon()
         air = -1;
     }
 }
+*/
 
 // Slot to get the name of the player from the startWindow
 void SetWindow::getEnemyName(QString n)
@@ -293,7 +311,10 @@ void SetWindow::getEnemyName(QString n)
     //me.change_player_names(name.toStdString(), "Netzwerkname");
 }
 
-// Change the direction of the ships and the string of the directionButton
+/**
+ * @brief SetWindow::changeDirection
+ * change the direction how the ships are displayed and the string of the directionButton
+ */
 void SetWindow::changeDirection()
 {
     if(uii->directionButton->text() == "Horizontal"){
@@ -316,7 +337,10 @@ void SetWindow::changeDirection()
     }
 }
 
-// Set the shipTable with an Air Carrier for draging it to the fieldTable
+/**
+ * @brief SetWindow::selectSubmarine
+ * set the shipTable with two items for draging it to the fieldTable
+ */
 void SetWindow::selectSubmarine()
 {
 
@@ -363,7 +387,10 @@ void SetWindow::selectSubmarine()
     uii->shipTable->setIconSize(QSize(sqSize,sqSize));
 }
 
-// Set the shipTable with an Destroyer for draging it to the fieldTable
+/**
+ * @brief SetWindow::selectDestroyer
+ * Set the shipTable with three items for draging it to the fieldTable
+ */
 void SetWindow::selectDestroyer()
 {
     zaehler = 3;
@@ -417,7 +444,10 @@ void SetWindow::selectDestroyer()
     }
 }
 
-// Set the shipTable with an Battleship for draging it to the fieldTable
+/**
+ * @brief SetWindow::selectBattleship
+ * Set the shipTable with four items for draging it to the fieldTable
+ */
 void SetWindow::selectBattleship()
 {
     zaehler = 4;
@@ -481,7 +511,10 @@ void SetWindow::selectBattleship()
     }
 }
 
-// Set the shipTable with an Air Carrier for draging it to the fieldTable
+/**
+ * @brief SetWindow::selectAirCarrier
+ * Set the shipTable with five items for draging it to the fieldTable
+ */
 void SetWindow::selectAirCarrier()
 {
     zaehler = 5;
@@ -551,7 +584,10 @@ void SetWindow::selectAirCarrier()
     }
 }
 
-// Set the size, headernames of the rows and columns and fills the fieldTable with sea-Items
+/**
+ * @brief SetWindow::tableManagement
+ * set the size, headernames of the rows and columns and fills the fieldTable with items with blue background
+ */
 void SetWindow::tableManagement()
 {
     uii->shipTable->setStyleSheet("selection-background-color: transparent;");
@@ -592,13 +628,14 @@ void SetWindow::tableManagement()
 }
 
 // shows the ItemList on the terminal
-void SetWindow::showItemList()
+/*void SetWindow::showItemList()
 {
     QString str;
     for(int i=0;i<itemList.count();i++){
         str += "(" + QString::number(itemList[i]->column()) + "," + QString::number(itemList[i]->row()) + ") - ";
     }
 }
+*/
 
 // returns the set game reference
 Game &SetWindow::getGameRef()
@@ -607,10 +644,11 @@ Game &SetWindow::getGameRef()
 }
 
 // returns a pointer to the fieldTable
-QTableWidget* SetWindow::getTable()
+/*QTableWidget* SetWindow::getTable()
 {
     return uii->fieldTable;
 }
+*/
 
 // get the information form the StartWindow if this window is host or not
 void SetWindow::setHost(bool h)
@@ -622,3 +660,4 @@ void SetWindow::setHost(bool h)
     else
         uii->startButton->setText("Bereit");
 }
+

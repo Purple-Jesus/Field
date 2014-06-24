@@ -1,6 +1,14 @@
 #include "playwindow.h"
 #include "ui_playwindow.h"
 
+/**
+ * @brief PlayWindow::PlayWindow
+ * @param h <defines if the player is host or not>
+ * @param _game <object of the game class which contains the player board>
+ * @param parent <parent is the StartWindow>
+ * constructor of the PlayWindow class
+ *
+ */
 PlayWindow::PlayWindow(bool h, Game _game, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::PlayWindow),
@@ -30,11 +38,21 @@ PlayWindow::PlayWindow(bool h, Game _game, QWidget *parent) :
     connect(this, SIGNAL(quitSignal()), parent, SLOT(revenge()));
 }
 
+/**
+ * @brief PlayWindow::~PlayWindow
+ * Deconstructor
+ */
 PlayWindow::~PlayWindow()
 {
     delete ui;
 }
 
+/**
+ * @brief PlayWindow::revenge
+ * slot connected to the Ja-Button in the EndDialog window
+ * close the EndDialog and the PlayWindow
+ * emit the quitSignal() connected to the revenge() slot of StartWindow
+ */
 void PlayWindow::revenge()
 {
     endD->close();
@@ -42,6 +60,14 @@ void PlayWindow::revenge()
     emit quitSignal();
 }
 
+/**
+ * @brief PlayWindow::setBomb
+ * @param r <y-coordinate of the bombed square>
+ * @param c <x-coordinate of the bombed square>
+ * slot connected to the cellClicked signal of the enemys board
+ * checks if the square is set or not and get the square hit
+ * draws depending of set or not a red or black point on the square
+ */
 void PlayWindow::setBomb(int r, int c)
 {
     if(game.getPlayerState()){
@@ -106,7 +132,14 @@ void PlayWindow::setBomb(int r, int c)
     ui->enemyTable->item(r,c)->setBackground(temp);
 }
 
-
+/**
+ * @brief PlayWindow::getBombed
+ * @param r <y-coordinate of the bombed square>
+ * @param c <x-coordinate of the bombed square>
+ * slot connected to the cellClicked signal of the players board
+ * checks if the square is set or not and get the square hit
+ * draws depending of set or not a red or black point on the square
+ */
 void PlayWindow::getBombed(int r, int c)
 {
     if(game.getPlayerState()){
@@ -163,7 +196,10 @@ void PlayWindow::getBombed(int r, int c)
     ui->playerTable->item(r,c)->setBackground(QBrush(temp));
 }
 
-// Set the size, headernames of the rows and columns and fills the enemyTable with sea-Items
+/**
+ * @brief PlayWindow::tableManagement
+ * set the size, headernames of the rows and columns and fills the enemyTable with items with blue backgrounds
+ */
 void PlayWindow::tableManagement()
 {
     QTableWidget *table;
@@ -233,6 +269,13 @@ void PlayWindow::tableManagement()
     }
 }
 
+
+/*
+void PlayWindow::quitGame()
+{
+    this->close();
+}*/
+
 /*
 void PlayWindow::getStartActivity(bool host)
 {
@@ -240,11 +283,6 @@ void PlayWindow::getStartActivity(bool host)
     game.setStartActivity(host);
 }
 */
-
-void PlayWindow::quitGame()
-{
-    this->close();
-}
 
 /*
 void PlayWindow::setGameRef(Game &_game)

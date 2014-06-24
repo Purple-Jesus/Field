@@ -8,6 +8,11 @@ namespace Ui {
 class ListWindow;
 }
 
+/**
+ * @brief The ListWindow class
+ * provide a window to enter the ip of the server
+ * after that it connects to the server
+ */
 class ListWindow : public QMainWindow
 {
     Q_OBJECT

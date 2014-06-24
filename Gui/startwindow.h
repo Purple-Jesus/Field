@@ -14,6 +14,10 @@ namespace Ui {
 class StartWindow;
 }
 
+/**
+ * @brief The StartWindow class
+ * the StartWindow-class provides all the objects of the other windows and
+ */
 class StartWindow : public QMainWindow
 {
     Q_OBJECT

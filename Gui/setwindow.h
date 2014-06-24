@@ -13,6 +13,10 @@ namespace Ui {
 class SetWindow;
 }
 
+/**
+ * @brief The SetWindow class
+ * in this window the player can set his ships
+ */
 class SetWindow : public QMainWindow
 {
     Q_OBJECT
@@ -61,7 +65,7 @@ private:
 
     void tableManagement();
     void refresh(int);
-    void discon();
+    //void discon();
 
 
 signals:
@@ -78,7 +82,7 @@ private slots:
     void selectBattleship();
     void selectAirCarrier();
     void getItems(QTableWidgetItem *item);
-    void showItemList();
+    //void showItemList();
     void setPlayerShip();
     void changeDirection();
     void checkSet();

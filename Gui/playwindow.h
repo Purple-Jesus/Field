@@ -11,6 +11,12 @@ namespace Ui {
 class PlayWindow;
 }
 
+/**
+ * @brief The PlayWindow class
+ * this is the class for the Window where the game acctually happens
+ * it contains two QTableWidgets which are use as boards the left is the board of the player
+ * and on the left the enemy board is displayed to get bombed by the player
+ */
 class PlayWindow : public QMainWindow
 {
     Q_OBJECT
@@ -43,13 +49,15 @@ private:
 signals:
     void quitSignal();
 
+private slots:
+    void setBomb(int a, int b);
+    void getBombed(int r, int c);
+
 public slots:
     //void setGameRef(Game &_game);
     //void getStartActivity(bool);
-    void setBomb(int a, int b);
-    void getBombed(int r, int c);
     void revenge();
-    void quitGame();
+    //void quitGame();
 };
 
 #endif // PLAYWINDOW_H
