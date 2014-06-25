@@ -65,7 +65,7 @@
         <item>
          <widget class="QLabel" name="startLabel_2">
           <property name="text">
-           <string>TextLabel</string>
+           <string/>
           </property>
          </widget>
         </item>
@@ -108,7 +108,7 @@
      <x>0</x>
      <y>0</y>
      <width>212</width>
-     <height>25</height>
+     <height>27</height>
     </rect>
    </property>
   </widget>

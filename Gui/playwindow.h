@@ -28,8 +28,8 @@ public:
 
 private:
     Ui::PlayWindow *ui;
-    Player player;
-    Player enemy;
+    //Player player;
+    //Player enemy;
     Game game;
     Board &playerBoard;
     Board &enemyBoard;

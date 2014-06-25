@@ -200,8 +200,10 @@ void Game::receive_enemy_board_from_network(char *squares) {
  * @param squares
  * @return
  */
-char* Game::send_board_to_network(char *squares) {
-    return Game::player.return_board_ref().send_set_squares(squares);
+// FF 25.06 remove return
+void Game::send_board_to_network(char *squares) {
+    char *c;
+    c = Game::player.return_board_ref().send_set_squares(squares);
 }
 
 

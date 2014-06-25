@@ -34,9 +34,9 @@ public:
 private:
     Ui::SetWindow *uii;
 
-    Player player;
+    //Player player;
     Game game;
-    Board playerBoard;
+    //Board playerBoard;
     QString name;
     int width;					// width of the field
     int height;					// height of the field
@@ -61,11 +61,11 @@ private:
     int field[10][10];
     bool host;
     bool occupied;
-    //SquareOccupied *oc;
+    char board[101];
 
     void tableManagement();
     void refresh(int);
-    //void discon();
+    char* cutBoard();
 
 
 signals:
@@ -73,10 +73,9 @@ signals:
     void startGame();
 
 public slots:
-
+    void setPlayerName(QString);
 
 private slots:
-    void getEnemyName(QString);
     void selectSubmarine();
     void selectDestroyer();
     void selectBattleship();

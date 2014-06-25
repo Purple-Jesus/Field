@@ -42,7 +42,7 @@ signals:
     void setStartActivity(bool);
 
 public slots:
-    void getName(QString n);
+    void getName();
     void openGame();
     void joinGame();
     void listWindowClosed();

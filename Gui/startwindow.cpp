@@ -17,7 +17,7 @@ StartWindow::StartWindow(QWidget *parent) :
     setW = new SetWindow(this);
     numb = 0;
 
-    connect(ui->lineEdit, SIGNAL(textEdited(QString)), this, SLOT(getName(QString)));
+    connect(ui->lineEdit, SIGNAL(editingFinished()), this, SLOT(getName()));
     connect(ui->startGameButton, SIGNAL(clicked()), this, SLOT(openGame()));
     connect(ui->joinGameButton, SIGNAL(clicked()), this, SLOT(joinGame()));
 }
@@ -40,9 +40,9 @@ StartWindow::~StartWindow()
  * @param n
  * saves the name if the user entered it in the lineEdit
  */
-void StartWindow::getName(QString n)
+void StartWindow::getName()
 {
-    name = n;
+    name = ui->lineEdit->text();
 }
 
 // Starts the server and opens the SetWindow
@@ -59,7 +59,8 @@ void StartWindow::openGame()
     if(numb == 1)
         server.startServer();
     setW->setWindowTitle("Ship Happens");
-    setW->setHost(true);
+    setW->setPlayerName(name);
+    setW->setHost(host);
     setW->show();
     hide();
 }
@@ -104,6 +105,10 @@ void StartWindow::listWindowClosed()
  */
 void StartWindow::startGame()
 {
+    if(host)
+        qDebug(" true");
+    else
+        qDebug(" false");
     //setW->getGameRef().player_print_boards();
     playW = new PlayWindow(host, setW->getGameRef(), this);
     setW->close();

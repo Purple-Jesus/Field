@@ -26,7 +26,7 @@ SetWindow::SetWindow(QWidget *parent) :
     air=1;
     horizontal = true;
     width = 10;
-    height = width;
+    height = 10;
     sqSize = 47;
     occupied = false;
 
@@ -38,7 +38,6 @@ SetWindow::SetWindow(QWidget *parent) :
 
     std::string enemyN = "Ganzer Peter";
     std::string playerN = name.toStdString();
-    game.change_player_name(playerN);
     game.change_enemy_name(enemyN);
     tableManagement();
     if(host)
@@ -69,44 +68,30 @@ SetWindow::~SetWindow()
 
 }
 
-/*
-void SetWindow::clearTable()
+/**
+ * @brief SetWindow::checkSet
+ * checks if all ships are set
+ * sends the board to the network
+ * emits the startGame() to start the PlayWindow
+ */
+void SetWindow::checkSet()
 {
-    sub=5;
-    dest=4;
-    batt=3;
-    air=1;
-    disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
-    disconnect(uii->destroyerButton, SIGNAL(clicked()), this, SLOT(selectDestroyer()));
-    disconnect(uii->submarineButton, SIGNAL(pressed()), this, SLOT(selectSubmarine()));
-    disconnect(uii->battleButton, SIGNAL(clicked()), this, SLOT(selectBattleship()));
-    disconnect(uii->directionButton, SIGNAL(clicked()), this, SLOT(changeDirection()));
-    disconnect(uii->startButton, SIGNAL(clicked()), this, SLOT(checkSet()));
-    disconnect(uii->airCarrierButton, SIGNAL(clicked()), this, SLOT(selectAirCarrier()));
-    disconnect(uii->shipTable, SIGNAL(cellPressed(int,int)), this, SLOT(resqueTable(int,int)));
-    disconnect(uii->shipTable, SIGNAL(itemSelectionChanged()), this, SLOT(selectAll()));
-    for(int i=0;i<width;i++){
-        for(int j=0;j<height;j++){
-            qDebug("    clearTable(%d;%d)",i,j);
-            uii->fieldTable->itemAt(i,j)->setIcon(QIcon("images/sea.png"));
-        }
+    //if((sub == -1) && (dest == -1) && (batt == -1) && (air == -1))
+    if(air == -1){
+        qDebug("     checkSet");
+        game.receive_enemy_board_from_network(cutBoard());
+        emit startGame();
+        //game.player_print_boards();
     }
-    qDebug("     tableManagement");
-    game.getBoardRef().clear_board();
-    qDebug("    end clearTable");
-    connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
-    connect(uii->destroyerButton, SIGNAL(clicked()), this, SLOT(selectDestroyer()));
-    connect(uii->submarineButton, SIGNAL(pressed()), this, SLOT(selectSubmarine()));
-    connect(uii->battleButton, SIGNAL(clicked()), this, SLOT(selectBattleship()));
-    connect(uii->directionButton, SIGNAL(clicked()), this, SLOT(changeDirection()));
-    connect(uii->startButton, SIGNAL(clicked()), this, SLOT(checkSet()));
-    connect(uii->airCarrierButton, SIGNAL(clicked()), this, SLOT(selectAirCarrier()));
-    connect(uii->shipTable, SIGNAL(cellPressed(int,int)), this, SLOT(resqueTable(int,int)));
-    connect(uii->shipTable, SIGNAL(itemSelectionChanged()), this, SLOT(selectAll()));
+    else
+        uii->statusbar->showMessage("Es müssen erst alle Schiffe plaziert werden.",5000);
 }
-*/
 
-// Saves the position of the items witch are changed trough the dropEvent
+/**
+ * @brief SetWindow::getItems
+ * @param item
+ * Saves thef items witch are changed trough the dropEvent in a QList
+ */
 void SetWindow::getItems(QTableWidgetItem *item)
 {
 
@@ -122,51 +107,12 @@ void SetWindow::getItems(QTableWidgetItem *item)
     }*/
 
     connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
-    qDebug("     getItems4");
     itemList << item;
     if(itemList.size() >= zaehler && !occupied){
-        qDebug("     getItems5");
         setPlayerShip();
-        qDebug("     getItems6");
         itemList.clear();
     }
-    //connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
 }
-
-//? sinnvoll
-/*
-void SetWindow::resqueTable(int a, int b)
-{
-    for(int i=0;i<height;i++){
-        for(int j=0;j<width;j++){
-            allIcons << uii->fieldTable->itemAt(i,j)->icon();
-        }
-    }
-}
-*/
-
-/**
- * @brief SetWindow::checkSet
- * checks if all ships are set and emits the startGame() to start the PlayWindow
- */
-void SetWindow::checkSet()
-{
-    //if((sub == -1) && (dest == -1) && (batt == -1) && (air == -1))
-    if(air == -1){
-        qDebug("Hilfe");
-        emit startGame();
-        //game.player_print_boards();
-    }
-    else
-        uii->statusbar->showMessage("Es müssen erst alle Schiffe plaziert werden.",5000);
-}
-
-/*
-void SetWindow::slotSendTable()
-{
-    emit sendTable(uii->fieldTable);
-}
-*/
 
 
 /**
@@ -271,44 +217,44 @@ void SetWindow::setPlayerShip()
     connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
 }
 
-//? Disables the ship-buttons if the max amount of the shiptype is set
-/*
-void SetWindow::discon()
-{
-    if(sub == 0){
-        uii->submarineButton->setEnabled(false);
-        uii->shipTable->setColumnCount(0);
-        uii->shipTable->setRowCount(0);
-        sub = -1;
-    }
-    if(dest == 0){
-        uii->destroyerButton->setEnabled(false);
-        uii->shipTable->setColumnCount(0);
-        uii->shipTable->setRowCount(0);
-        dest = -1;
-    }
-    if(batt == 0){
-        uii->battleButton->setEnabled(false);
-        uii->shipTable->setColumnCount(0);
-        uii->shipTable->setRowCount(0);
-        batt = -1;
-    }
-    if(air == 0){
-        uii->airCarrierButton->setEnabled(false);
-        disconnect(this, SLOT(selectAirCarrier()));
-        uii->shipTable->setColumnCount(0);
-        uii->shipTable->setRowCount(0);
-        air = -1;
-    }
-}
-*/
-
 // Slot to get the name of the player from the startWindow
-void SetWindow::getEnemyName(QString n)
+/**
+ * @brief SetWindow::getEnemyName
+ * @param n
+ */
+void SetWindow::setPlayerName(QString n)
 {
     name = n;
-    setWindowTitle("Ship Happens - " + name);
+    std::string hmmm = name.toStdString();
+    game.change_player_name(hmmm);
+    setWindowTitle("Ship Happens");
     //me.change_player_names(name.toStdString(), "Netzwerkname");
+}
+
+/**
+ * @brief SetWindow::cutBoard
+ * @return char*
+ * returns the player board in a char array where X means ship set and O means no ship set
+ */
+char* SetWindow::cutBoard()
+{
+    for(int i=0;i<width;i++){
+        for(int j=0;j<height;j++){
+            qDebug("(%d;%d)",i,j);
+            qDebug("%c",board[i+j]);
+            if(game.getBoardRef().get_Square_ptr((size_t)(j+1),(size_t)(i+1))->get_square_set()){
+                qDebug(" X");
+                board[i+j] = 'X';
+            }
+            else{
+                qDebug(" O");
+                board[i+j] = 'O';
+            }
+        }
+    }
+    qDebug("%s",board);
+    board[width*height+1] = '\0';
+    return board;
 }
 
 /**
@@ -610,7 +556,7 @@ void SetWindow::tableManagement()
         uii->fieldTable->setRowHeight(i,sqSize);
 
     // fills the fields of the table with squareg items
-    QPixmap pixmap("images/sea.png");
+    //QPixmap pixmap("images/sea.png");
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
             //QTableWidgetItem *item = new QTableWidgetItem(QIcon(pixmap)," ",1000);
@@ -627,30 +573,21 @@ void SetWindow::tableManagement()
 
 }
 
-// shows the ItemList on the terminal
-/*void SetWindow::showItemList()
-{
-    QString str;
-    for(int i=0;i<itemList.count();i++){
-        str += "(" + QString::number(itemList[i]->column()) + "," + QString::number(itemList[i]->row()) + ") - ";
-    }
-}
-*/
-
-// returns the set game reference
+/**
+ * @brief SetWindow::getGameRef
+ * @return  Game
+ * returns the set game reference
+ */
 Game &SetWindow::getGameRef()
 {
     return game;
 }
 
-// returns a pointer to the fieldTable
-/*QTableWidget* SetWindow::getTable()
-{
-    return uii->fieldTable;
-}
-*/
-
-// get the information form the StartWindow if this window is host or not
+/**
+ * @brief SetWindow::setHost
+ * @param h
+ * get the information form the StartWindow if this window is host or not
+ */
 void SetWindow::setHost(bool h)
 {
     host = h;
@@ -660,4 +597,5 @@ void SetWindow::setHost(bool h)
     else
         uii->startButton->setText("Bereit");
 }
+
 

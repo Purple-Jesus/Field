@@ -73,7 +73,7 @@ public:
      * Network
      */
     void receive_enemy_board_from_network(char* squares);
-    char* send_board_to_network(char *squares);
+    void send_board_to_network(char *squares);
 
 # ifndef GRAPHIC
     // help functions for terminal debugging
