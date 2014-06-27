@@ -357,14 +357,14 @@ char* Board::send_set_squares(char *squares) {
         for(size_t line = 0; line < Board::widht; line++) {
             if(Board::field[collumn + 1][line + 1].get_square_set()) {
                 squares[(collumn * Board::lenght) + line] = 'X';
-                std::cout << squares << std::endl;
+                //std::cout << squares << std::endl;
             }
             else {
                 squares[(collumn * Board::lenght) + line] = 'O';
             }
         }
     }
-    std::cout << squares << std::endl;
+    //std::cout << squares << std::endl;
     return squares;
 }
 
@@ -377,13 +377,13 @@ char* Board::send_set_squares(char *squares) {
 void Board::receive_set_squares(char* squares) {
     for(size_t collumn = 0; collumn < Board::lenght; collumn ++){
         for(size_t line = 0; line < Board::widht; line++) {
-            //if(squares[(collumn * Board::lenght) + line] == 'X') {
-            if(squares[collumn + line] == 'X') {
+            if(squares[(collumn * Board::lenght) + line] == 'X') {
                 Board::field[collumn + 1][line + 1].set_square();
             }
         }
     }
 }
+
 
 
 /**

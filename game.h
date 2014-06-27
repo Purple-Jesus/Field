@@ -73,7 +73,7 @@ public:
      * Network
      */
     void receive_enemy_board_from_network(char* squares);
-    void send_board_to_network(char *squares);
+    char *send_board_to_network(char * squares);
 
 # ifndef GRAPHIC
     // help functions for terminal debugging
@@ -100,6 +100,7 @@ public:
     bool getPlayerState();              // FF GUI1
     void setStartActivity(bool);       // FF GUI1
     Player& getPlayer();              // FF GUI1
+    void printBoards();              // FF GUI1
 
 };
 

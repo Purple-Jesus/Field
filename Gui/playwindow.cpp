@@ -3,9 +3,9 @@
 
 /**
  * @brief PlayWindow::PlayWindow
- * @param h <defines if the player is host or not>
- * @param _game <object of the game class which contains the player board>
- * @param parent <parent is the StartWindow>
+ * @param h
+ * @param _game
+ * @param parent
  * constructor of the PlayWindow class
  *
  */
@@ -22,22 +22,44 @@ PlayWindow::PlayWindow(bool h, Game _game, QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle("Ship Happens");
     //game.getEnemyBoardRef() = game.getBoardRef();
-    playerBoard.print_own_board();
-    game.enemy_set_ship_test();
-    enemyBoard.print_own_board();
+    //playerBoard.print_own_board();
+    //game.enemy_set_ship_test();
+    //enemyBoard.print_own_board();
     game.setStartActivity(host);
 
     ui->label_2->setText("Gewaesser von " + QString::fromStdString(game.get_enemy_name()));
     width = 10;
     height = 10;
     sqSize = 45;
+    countSet();
     pen.setWidth(10);
     pen.setJoinStyle(Qt::RoundJoin);
     tableManagement();
 
+    pen.setColor(Qt::black);
+    templatBlack = QImage("/home/felix/Documents/prog/Field/images/sea.png");
+    painter.begin(&templatBlack);
+    painter.setPen(pen);
+    for(int i=0;i<templatBlack.height();i++)
+        for(int j=0;j<templatBlack.width();j++){
+            painter.drawPoint(i,j);
+        }
+    painter.end();
+
+    pen.setColor(Qt::blue);
+    templatBlue = QImage("/home/felix/Documents/prog/Field/images/sea.png");
+    painter.begin(&templatBlue);
+    painter.setPen(pen);
+    for(int i=0;i<templatBlue.height();i++)
+        for(int j=0;j<templatBlue.width();j++){
+            painter.drawPoint(i,j);
+        }
+    painter.end();
+
     connect(ui->enemyTable, SIGNAL(cellClicked(int,int)), this, SLOT(setBomb(int,int)));
     connect(ui->playerTable, SIGNAL(cellClicked(int,int)), this, SLOT(getBombed(int,int)));
     connect(this, SIGNAL(quitSignal()), parent, SLOT(revenge()));
+    game.printBoards();
 }
 
 /**
@@ -83,7 +105,7 @@ void PlayWindow::setBomb(int r, int c)
     }
 
     int size = ui->enemyTable->iconSize().height();
-    QImage temp = QImage("images/white");
+    QImage temp = QImage("/home/felix/Documents/prog/Field/images/white");
     if(enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->get_square_set()){
         pen.setColor(Qt::black);
         painter.begin(&temp);
@@ -101,7 +123,8 @@ void PlayWindow::setBomb(int r, int c)
         ui->statusbar->showMessage("Yeaaaayyy das war der Gegner.",4000);
         //enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
         game.bomb_square((size_t)(c+1),(size_t)(r+1));
-        if(game.change_activity_status()){
+        count -=1;
+        if(!game.change_activity_status() && count == 0){
             endD = new EndDialog(game.get_player_name(),true,this);
             endD->show();
         }
@@ -148,16 +171,17 @@ void PlayWindow::getBombed(int r, int c)
     }
 
     int size = ui->enemyTable->iconSize().height();
-    QImage temp = QImage("images/sea.png");
+    QImage temp = templatBlue;
     if(playerBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->get_square_set()){
-        pen.setColor(Qt::black);
+        /*pen.setColor(Qt::black);
         painter.begin(&temp);
         painter.setPen(pen);
         for(int i=0;i<temp.height();i++)
             for(int j=0;j<temp.width();j++){
                 painter.drawPoint(i,j);
             }
-        painter.end();
+        painter.end();*/
+
         pen.setColor(red);
         painter.begin(&temp);
         painter.setPen(pen);
@@ -175,6 +199,7 @@ void PlayWindow::getBombed(int r, int c)
         //game.getPlayer().print_ships();
     }
     else{
+        /*
         pen.setColor(Qt::blue);
         painter.begin(&temp);
         painter.setPen(pen);
@@ -183,6 +208,7 @@ void PlayWindow::getBombed(int r, int c)
                 painter.drawPoint(i,j);
             }
         painter.end();
+        */
         pen.setColor(black);
         painter.begin(&temp);
         painter.setPen(pen);
@@ -228,13 +254,13 @@ void PlayWindow::tableManagement()
             table->setRowHeight(i,sqSize);
 
         // fills the fields of the table with squareg items
-        QPixmap sea("images/sea.png");
-        QPixmap top("images/top.png");
-        QPixmap mid("images/middle.png");
-        QPixmap bot("images/bottom.png");
-        QPixmap left("images/left.png");
-        QPixmap vmid("images/vmiddle.png");
-        QPixmap right("images/right.png");
+        QPixmap sea("/home/felix/Documents/prog/Field/images/sea.png");
+        QPixmap top("/home/felix/Documents/prog/Field/images/top.png");
+        QPixmap mid("/home/felix/Documents/prog/Field/images/middle.png");
+        QPixmap bot("/home/felix/Documents/prog/Field/images/bottom.png");
+        QPixmap left("/home/felix/Documents/prog/Field/images/left.png");
+        QPixmap vmid("/home/felix/Documents/prog/Field/images/vmiddle.png");
+        QPixmap right("/home/felix/Documents/prog/Field/images/right.png");
         for(size_t i=0;i<(size_t)width;i++){
             for(size_t j=0;j<(size_t)height;j++){
                 if(k == 1){
@@ -266,5 +292,15 @@ void PlayWindow::tableManagement()
         }
         table->setDragDropMode(QAbstractItemView::DropOnly);
         table->setIconSize(QSize(sqSize+3,sqSize+3));
+    }
+}
+
+void PlayWindow::countSet(){
+    count = 0;
+    for(int i=0;i<width;i++){
+        for(int j=0;j<height;j++){
+            if(game.getEnemyBoardRef().get_Square_ptr((size_t)i+1,(size_t)j+1)->get_square_set())
+                count +=1;
+        }
     }
 }

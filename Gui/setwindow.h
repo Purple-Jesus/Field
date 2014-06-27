@@ -61,11 +61,13 @@ private:
     int field[10][10];
     bool host;
     bool occupied;
-    char board[101];
+    char *board;
+    QList<Square*> squareList;
 
     void tableManagement();
     void refresh(int);
     char* cutBoard();
+    void oneStepBack();
 
 
 signals:

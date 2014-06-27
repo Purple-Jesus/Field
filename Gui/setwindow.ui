@@ -105,7 +105,7 @@
         <item>
          <widget class="QPushButton" name="submarineButton">
           <property name="text">
-           <string>Submarine 5x</string>
+           <string>Submarine</string>
           </property>
          </widget>
         </item>

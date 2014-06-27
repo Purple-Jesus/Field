@@ -29,15 +29,19 @@ SetWindow::SetWindow(QWidget *parent) :
     height = 10;
     sqSize = 47;
     occupied = false;
+    board = new char[100];
 
     uii->setupUi(this);
     uii->shipTable->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
     uii->statusbar->showMessage("Plazieren Sie Ihre Schiffe.");
+    uii->submarineButton->setText("U-Boot " + QString::number(sub) + "x");
+    uii->destroyerButton->setText("Zerstoerer " + QString::number(dest) + "x");
+    uii->battleButton->setText("Schlachtschiff " + QString::number(batt) + "x");
+    uii->airCarrierButton->setText("Flugzeugtraeger " + QString::number(air) + "x");
     setWindowIcon(QPixmap("images/ship.png"));
     setWindowTitle("Ship Happens");
 
     std::string enemyN = "Ganzer Peter";
-    std::string playerN = name.toStdString();
     game.change_enemy_name(enemyN);
     tableManagement();
     if(host)
@@ -64,6 +68,7 @@ SetWindow::SetWindow(QWidget *parent) :
 SetWindow::~SetWindow()
 {
     delete uii;
+    delete board;
     qDebug("    ~SetWindow");
 
 }
@@ -76,12 +81,10 @@ SetWindow::~SetWindow()
  */
 void SetWindow::checkSet()
 {
-    //if((sub == -1) && (dest == -1) && (batt == -1) && (air == -1))
-    if(air == -1){
-        qDebug("     checkSet");
-        game.receive_enemy_board_from_network(cutBoard());
+    //if((sub == -1) && (dest == -1) && (batt == -1) && (air == -1)){
+    if(true){
+        game.receive_enemy_board_from_network(game.send_board_to_network(board));
         emit startGame();
-        //game.player_print_boards();
     }
     else
         uii->statusbar->showMessage("Es müssen erst alle Schiffe plaziert werden.",5000);
@@ -94,26 +97,32 @@ void SetWindow::checkSet()
  */
 void SetWindow::getItems(QTableWidgetItem *item)
 {
-
-    disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
-    /*if(!game.getBoardRef().get_Square_ptr((size_t)item->column()+1, (size_t)item->row()+1)->get_square_set()){
-        qDebug("     getItems1");
-        QTableWidgetItem *newItem = new QTableWidgetItem();
-        newItem->setBackgroundColor(Qt::blue);
-        qDebug("     getItems2");
-        uii->fieldTable->setItem(item->column(),item->row(),newItem);
-        qDebug("     getItems3");
-        occupied = true;
-    }*/
-
-    connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
+    squareList.append(game.getBoardRef().get_Square_ptr((size_t)item->column()+1,(size_t)item->row()+1));
     itemList << item;
-    if(itemList.size() >= zaehler && !occupied){
-        setPlayerShip();
-        itemList.clear();
+    qDebug("%d",itemList.size());
+    if(itemList.size() >= zaehler){
+        for(int i=squareList.size();i<5;i++){
+            squareList.append(NULL);
+        }
+            setPlayerShip();
+        //itemList.clear();
     }
 }
 
+void SetWindow::oneStepBack(){
+    disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
+    qDebug("Sollte nicht leer sein!!!!");
+    for(int i=0;i<itemList.size();i++){
+        //uii->fieldTable->item
+        if(squareList[i]->get_square_set())
+            uii->fieldTable->item(itemList[i]->row(),itemList[i]->column())->setBackgroundColor(Qt::black);
+        else
+            uii->fieldTable->item(itemList[i]->row(),itemList[i]->column())->setBackgroundColor(Qt::blue);
+
+    }
+    connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
+    squareList.clear();
+}
 
 /**
  * @brief SetWindow::setPlayerShip
@@ -124,33 +133,28 @@ void SetWindow::setPlayerShip()
     //disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
     Square *sq1, *sq2, *sq3, *sq4, *sq5;
     sq1 = game.getBoardRef().get_Square_ptr((size_t)itemList[0]->column()+1, (size_t)itemList[0]->row()+1);
-    qDebug("(%d,%d)",itemList[0]->column(),itemList[0]->row());
     sq2 = game.getBoardRef().get_Square_ptr((size_t)itemList[1]->column()+1, (size_t)itemList[1]->row()+1);
-    qDebug("(%d,%d)",itemList[1]->column(),itemList[1]->row());
-    qDebug("      setPlayerShip1");
     switch(zaehler){
         case 2:
             if(!game.place_ships(sq1,sq2)){
-                qDebug("      setPlayerShip2.1");
-                uii->statusbar->showMessage("Hier kann das Schiff nicht setzen.",3000);
+                uii->statusbar->showMessage("Hier kann kein Schiff gesetzt werden.",3000);
+                oneStepBack();
             }
             else{
-                qDebug("      setPlayerShip2.2");
+                squareList.clear();
                 game.getPlayer().get_Submarine_ref(sub).set_ship(sq1,sq2);
-                //field[itemList[0]->column()][itemList[0]->row()] = 1;
-                //field[itemList[1]->column()][itemList[1]->row()] = 1;
                 sub -= 1;
                 uii->submarineButton->setText("Submarine " + QString::number(sub) + "x");
             }
             break;
         case 3:
             sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
-            qDebug("(%d,%d)",itemList[2]->column(),itemList[2]->row());
             if(!game.place_ships(sq1,sq2,sq3))
-                uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",3000);
+                uii->statusbar->showMessage("Hier kann kein Schiff gesetzt werden.",3000);
             else{
                 game.getPlayer().get_Destroyer_ref((size_t)dest).set_ship(sq1,sq2,sq3);
                 dest -= 1;
+                uii->destroyerButton->setText("Zerstoerer " + QString::number(dest) + "x");
             }
 
             break;
@@ -158,54 +162,48 @@ void SetWindow::setPlayerShip()
             sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
             sq4 = game.getBoardRef().get_Square_ptr((size_t)itemList[3]->column()+1, (size_t)itemList[3]->row()+1);
             if(!game.place_ships(sq1,sq2,sq3,sq4))
-                uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",3000);
+                uii->statusbar->showMessage("Hier kann kein Schiff gesetzt werden.",3000);
             else
                 game.getPlayer().get_BattleShip_ref(batt).set_ship(sq1,sq2,sq3,sq4);
             batt -= 1;
+            uii->battleButton->setText("Schlachtschiff " + QString::number(batt) + "x");
             break;
         case 5:
             sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
             sq4 = game.getBoardRef().get_Square_ptr((size_t)itemList[3]->column()+1, (size_t)itemList[3]->row()+1);
             sq5 = game.getBoardRef().get_Square_ptr((size_t)itemList[4]->column()+1, (size_t)itemList[4]->row()+1);
             if(!game.place_ships(sq1,sq2,sq3,sq4,sq5)){
-                uii->statusbar->showMessage("Hier koennen sie ihr Schiff nicht setzen.",3000);
-                for(int i=0;i<5;i++){
-                    qDebug("    resea");
-                    QTableWidgetItem *item = new QTableWidgetItem(QIcon("images/sea.png"),"",1000);
-                    qDebug("    1");
-                    uii->fieldTable->setItem(itemList[i]->column(),itemList[i]->row(),item);
-                    qDebug("    2");
-                }
+                uii->statusbar->showMessage("Hier kann kein Schiff gesetzt werden.",3000);
             }
-            else
+            else{
                 game.getPlayer().get_AirCarrier_ref(air).set_ship(sq1,sq2,sq3,sq4,sq5);
-            air -= 1;
+                air -= 1;
+                uii->airCarrierButton->setText("Flugzeugtraeger " + QString::number(air) + "x");
+            }
             break;
     }
 
-    occupied = false;
     disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
-    //discon();
     //23.06 BEGIN
-    if(sub == 0){
+    if(sub <= 0){
         uii->submarineButton->setEnabled(false);
         uii->shipTable->setColumnCount(0);
         uii->shipTable->setRowCount(0);
         sub = -1;
     }
-    if(dest == 0){
+    if(dest <= 0){
         uii->destroyerButton->setEnabled(false);
         uii->shipTable->setColumnCount(0);
         uii->shipTable->setRowCount(0);
         dest = -1;
     }
-    if(batt == 0){
+    if(batt <= 0){
         uii->battleButton->setEnabled(false);
         uii->shipTable->setColumnCount(0);
         uii->shipTable->setRowCount(0);
         batt = -1;
     }
-    if(air == 0){
+    if(air <= 0){
         uii->airCarrierButton->setEnabled(false);
         disconnect(this, SLOT(selectAirCarrier()));
         uii->shipTable->setColumnCount(0);
@@ -213,8 +211,8 @@ void SetWindow::setPlayerShip()
         air = -1;
     }
     //23.06 END
-    qDebug("      setPlayerShip3");
     connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
+    itemList.clear();
 }
 
 // Slot to get the name of the player from the startWindow
@@ -232,32 +230,6 @@ void SetWindow::setPlayerName(QString n)
 }
 
 /**
- * @brief SetWindow::cutBoard
- * @return char*
- * returns the player board in a char array where X means ship set and O means no ship set
- */
-char* SetWindow::cutBoard()
-{
-    for(int i=0;i<width;i++){
-        for(int j=0;j<height;j++){
-            qDebug("(%d;%d)",i,j);
-            qDebug("%c",board[i+j]);
-            if(game.getBoardRef().get_Square_ptr((size_t)(j+1),(size_t)(i+1))->get_square_set()){
-                qDebug(" X");
-                board[i+j] = 'X';
-            }
-            else{
-                qDebug(" O");
-                board[i+j] = 'O';
-            }
-        }
-    }
-    qDebug("%s",board);
-    board[width*height+1] = '\0';
-    return board;
-}
-
-/**
  * @brief SetWindow::changeDirection
  * change the direction how the ships are displayed and the string of the directionButton
  */
@@ -272,13 +244,13 @@ void SetWindow::changeDirection()
         horizontal = true;
     }
     switch(zaehler){
-        case 2: selectSubmarine();
+        case 2: if(sub>0) selectSubmarine();
         break;
-        case 3: selectDestroyer();
+        case 3: if(dest>0) selectDestroyer();
         break;
-        case 4: selectBattleship();
+        case 4: if(batt>0) selectBattleship();
         break;
-        case 5: selectAirCarrier();
+        case 5: if(air>0) selectAirCarrier();
         break;
     }
 }
@@ -289,13 +261,9 @@ void SetWindow::changeDirection()
  */
 void SetWindow::selectSubmarine()
 {
-
     zaehler = 2;
-    //uii->label->setText("Zaehler = " + QString::number(zaehler));
     if(horizontal){
         uii->shipTable->setRowCount(1);
-        //uii->shipTable->setRowHeight(0,sqSize);
-
         uii->shipTable->setColumnCount(zaehler);
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setColumnWidth(i,sqSize);
@@ -563,9 +531,6 @@ void SetWindow::tableManagement()
             QTableWidgetItem *item = new QTableWidgetItem();
             item->setBackgroundColor(Qt::blue);
             uii->fieldTable->setItem(i,j,item);
-            uii->fieldTable->itemAt(i,j)->setSizeHint(QSize(sqSize,sqSize));
-            //index[i][j] = width * i + j;
-            field[i][j] = 0;
         }
     }
     uii->fieldTable->setDragDropMode(QAbstractItemView::DropOnly);
@@ -597,5 +562,3 @@ void SetWindow::setHost(bool h)
     else
         uii->startButton->setText("Bereit");
 }
-
-

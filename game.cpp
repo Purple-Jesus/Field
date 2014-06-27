@@ -191,7 +191,8 @@ void Game::bomb_square(size_t _x, size_t _y) {
  * @param squares
  */
 void Game::receive_enemy_board_from_network(char *squares) {
-    Game::enemy_board.receive_set_squares(squares);
+    Game::enemy.return_board_ref().receive_set_squares(squares);
+    enemy_board.print_own_board();
 }
 
 
@@ -200,10 +201,8 @@ void Game::receive_enemy_board_from_network(char *squares) {
  * @param squares
  * @return
  */
-// FF 25.06 remove return
-void Game::send_board_to_network(char *squares) {
-    char *c;
-    c = Game::player.return_board_ref().send_set_squares(squares);
+char* Game::send_board_to_network(char *squares) {
+    return (Game::player.return_board_ref().send_set_squares(squares));
 }
 
 
@@ -1073,4 +1072,13 @@ Player& Game::getPlayer()
     Player &p = Game::player;
     return p;
 }
+
+void Game::printBoards()
+{
+    std::cout << "player:\n";
+    player.print_field();
+    std::cout << "enemy:\n";
+    enemy.print_field();
+}
+
 //GUI1 END

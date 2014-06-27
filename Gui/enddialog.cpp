@@ -12,10 +12,10 @@ EndDialog::EndDialog(std::string name, bool win, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EndDialog)
 {
-    qDebug("        EndDialog");
+    qDebug("         EndDialog");
     ui->setupUi(this);
     if(win){
-        ui->picture->setPixmap(QPixmap("images/funny.png"));
+        ui->picture->setPixmap(QPixmap("/home/felix/Documents/prog/Field/images/funny.png"));
         ui->label->setText("Herzlichen Glueckwunsch " + QString::fromStdString(name) + ", du hast das Spiel Gewonnen");
     }
     else{

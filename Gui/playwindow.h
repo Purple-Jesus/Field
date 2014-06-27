@@ -42,9 +42,13 @@ private:
     QPainter painter;
     EndDialog *endD;
     bool host;
+    QImage templatBlue;
+    QImage templatBlack;
+    int count;
 
     void tableManagement();
     void setShips();
+    void countSet();
 
 signals:
     void quitSignal();
