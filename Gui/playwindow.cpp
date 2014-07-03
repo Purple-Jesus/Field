@@ -20,7 +20,7 @@ PlayWindow::PlayWindow(bool h, Game _game, QWidget *parent) :
 {
     qDebug("    Playwindow");
     ui->setupUi(this);
-    setWindowTitle("Ship Happens");
+    setWindowTitle("Ship Happens!");
     //game.getEnemyBoardRef() = game.getBoardRef();
     //playerBoard.print_own_board();
     //game.enemy_set_ship_test();

@@ -41,51 +41,12 @@
       </property>
       <item>
        <widget class="QTableWidget" name="fieldTable">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="cursor" stdset="0">
-         <cursorShape>CrossCursor</cursorShape>
-        </property>
-        <property name="autoFillBackground">
-         <bool>true</bool>
-        </property>
-        <property name="editTriggers">
-         <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::EditKeyPressed</set>
-        </property>
-        <property name="dragEnabled">
-         <bool>true</bool>
-        </property>
-        <property name="dragDropMode">
-         <enum>QAbstractItemView::DragDrop</enum>
+        <property name="tabKeyNavigation">
+         <bool>false</bool>
         </property>
         <property name="defaultDropAction">
-         <enum>Qt::MoveAction</enum>
+         <enum>Qt::CopyAction</enum>
         </property>
-        <row>
-         <property name="text">
-          <string>New Row</string>
-         </property>
-        </row>
-        <column>
-         <property name="text">
-          <string>New Column</string>
-         </property>
-        </column>
-        <item row="0" column="0">
-         <property name="background">
-          <brush brushstyle="SolidPattern">
-           <color alpha="255">
-            <red>0</red>
-            <green>0</green>
-            <blue>127</blue>
-           </color>
-          </brush>
-         </property>
-        </item>
        </widget>
       </item>
       <item>
@@ -149,6 +110,12 @@
           </property>
           <property name="dragEnabled">
            <bool>true</bool>
+          </property>
+          <property name="dragDropOverwriteMode">
+           <bool>false</bool>
+          </property>
+          <property name="defaultDropAction">
+           <enum>Qt::CopyAction</enum>
           </property>
           <attribute name="horizontalHeaderVisible">
            <bool>false</bool>

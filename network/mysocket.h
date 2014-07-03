@@ -6,6 +6,7 @@
 #include <QTcpSocket>
 #include <QAbstractSocket>
 
+
 class MySocket : public QObject
 {
     Q_OBJECT

@@ -1,6 +1,5 @@
 #include "Gui/setwindow.h"
 #include "ui_setwindow.h"
-#include <QtTest/QTest>
 #include <QDebug>
 #include "my_headers.h"
 
@@ -38,6 +37,10 @@ SetWindow::SetWindow(QWidget *parent) :
     uii->destroyerButton->setText("Zerstoerer " + QString::number(dest) + "x");
     uii->battleButton->setText("Schlachtschiff " + QString::number(batt) + "x");
     uii->airCarrierButton->setText("Flugzeugtraeger " + QString::number(air) + "x");
+    uii->fieldTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    uii->fieldTable->setDragDropOverwriteMode(true);
+    uii->fieldTable->setDragDropMode(QAbstractItemView::DropOnly);
+    uii->shipTable->setDragEnabled(true);
     setWindowIcon(QPixmap("images/ship.png"));
     setWindowTitle("Ship Happens");
 
@@ -59,7 +62,6 @@ SetWindow::SetWindow(QWidget *parent) :
     connect(uii->airCarrierButton, SIGNAL(clicked()), this, SLOT(selectAirCarrier()));
     connect(uii->shipTable, SIGNAL(itemSelectionChanged()), uii->shipTable, SLOT(selectAll()));
 }
-
 
 /**
  * @brief SetWindow::~SetWindow
@@ -87,38 +89,40 @@ void SetWindow::checkSet()
         emit startGame();
     }
     else
-        uii->statusbar->showMessage("Es müssen erst alle Schiffe plaziert werden.",5000);
+        uii->statusbar->showMessage("Es muessen erst alle Schiffe plaziert werden.",5000);
 }
 
 /**
  * @brief SetWindow::getItems
  * @param item
- * Saves thef items witch are changed trough the dropEvent in a QList
+ * Saves the items witch are changed trough the dropEvent in a QList
  */
 void SetWindow::getItems(QTableWidgetItem *item)
 {
     squareList.append(game.getBoardRef().get_Square_ptr((size_t)item->column()+1,(size_t)item->row()+1));
     itemList << item;
     qDebug("%d",itemList.size());
-    if(itemList.size() >= zaehler){
+    if(itemList.size() == zaehler){
         for(int i=squareList.size();i<5;i++){
             squareList.append(NULL);
         }
             setPlayerShip();
-        //itemList.clear();
     }
 }
 
 void SetWindow::oneStepBack(){
     disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
-    qDebug("Sollte nicht leer sein!!!!");
-    for(int i=0;i<itemList.size();i++){
-        //uii->fieldTable->item
-        if(squareList[i]->get_square_set())
-            uii->fieldTable->item(itemList[i]->row(),itemList[i]->column())->setBackgroundColor(Qt::black);
-        else
-            uii->fieldTable->item(itemList[i]->row(),itemList[i]->column())->setBackgroundColor(Qt::blue);
-
+    for(int i=0;i<zaehler;i++){
+        if(!squareList[i]->get_square_set()){
+            qDebug("making it black");
+            //uii->fieldTable->item(itemList[i]->row(),itemList[i]->column())->setBackgroundColor(Qt::black);
+            itemList[i]->setBackgroundColor(Qt::black);
+        }
+        else{
+            qDebug("making it blue");
+            //uii->fieldTable->item(itemList[i]->row(),itemList[i]->column())->setBackgroundColor(Qt::blue);
+            itemList[i]->setBackgroundColor(Qt::blue);
+        }
     }
     connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
     squareList.clear();
@@ -130,8 +134,11 @@ void SetWindow::oneStepBack(){
  */
 void SetWindow::setPlayerShip()
 {
-    //disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
-    Square *sq1, *sq2, *sq3, *sq4, *sq5;
+    Square *sq1 = squareList[0];
+    Square *sq2 = squareList[1];
+    Square *sq3 = squareList[2];
+    Square *sq4 = squareList[3];
+    Square *sq5 = squareList[4];
     sq1 = game.getBoardRef().get_Square_ptr((size_t)itemList[0]->column()+1, (size_t)itemList[0]->row()+1);
     sq2 = game.getBoardRef().get_Square_ptr((size_t)itemList[1]->column()+1, (size_t)itemList[1]->row()+1);
     switch(zaehler){
@@ -148,9 +155,11 @@ void SetWindow::setPlayerShip()
             }
             break;
         case 3:
-            sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
-            if(!game.place_ships(sq1,sq2,sq3))
+            //sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
+            if(!game.place_ships(sq1,sq2,sq3)){
+                oneStepBack();
                 uii->statusbar->showMessage("Hier kann kein Schiff gesetzt werden.",3000);
+            }
             else{
                 game.getPlayer().get_Destroyer_ref((size_t)dest).set_ship(sq1,sq2,sq3);
                 dest -= 1;
@@ -159,21 +168,24 @@ void SetWindow::setPlayerShip()
 
             break;
         case 4:
-            sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
-            sq4 = game.getBoardRef().get_Square_ptr((size_t)itemList[3]->column()+1, (size_t)itemList[3]->row()+1);
-            if(!game.place_ships(sq1,sq2,sq3,sq4))
+            //sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
+            //sq4 = game.getBoardRef().get_Square_ptr((size_t)itemList[3]->column()+1, (size_t)itemList[3]->row()+1);
+            if(!game.place_ships(sq1,sq2,sq3,sq4)){
                 uii->statusbar->showMessage("Hier kann kein Schiff gesetzt werden.",3000);
-            else
+                oneStepBack();
+            }
+            else{
                 game.getPlayer().get_BattleShip_ref(batt).set_ship(sq1,sq2,sq3,sq4);
-            batt -= 1;
-            uii->battleButton->setText("Schlachtschiff " + QString::number(batt) + "x");
+                batt -= 1;
+            }
             break;
         case 5:
-            sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
-            sq4 = game.getBoardRef().get_Square_ptr((size_t)itemList[3]->column()+1, (size_t)itemList[3]->row()+1);
-            sq5 = game.getBoardRef().get_Square_ptr((size_t)itemList[4]->column()+1, (size_t)itemList[4]->row()+1);
+            //sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
+            //sq4 = game.getBoardRef().get_Square_ptr((size_t)itemList[3]->column()+1, (size_t)itemList[3]->row()+1);
+            //sq5 = game.getBoardRef().get_Square_ptr((size_t)itemList[4]->column()+1, (size_t)itemList[4]->row()+1);
             if(!game.place_ships(sq1,sq2,sq3,sq4,sq5)){
                 uii->statusbar->showMessage("Hier kann kein Schiff gesetzt werden.",3000);
+                oneStepBack();
             }
             else{
                 game.getPlayer().get_AirCarrier_ref(air).set_ship(sq1,sq2,sq3,sq4,sq5);
@@ -182,8 +194,6 @@ void SetWindow::setPlayerShip()
             }
             break;
     }
-
-    disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
     //23.06 BEGIN
     if(sub <= 0){
         uii->submarineButton->setEnabled(false);
@@ -211,14 +221,13 @@ void SetWindow::setPlayerShip()
         air = -1;
     }
     //23.06 END
-    connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
     itemList.clear();
 }
 
-// Slot to get the name of the player from the startWindow
 /**
  * @brief SetWindow::getEnemyName
  * @param n
+ * Slot to get the name of the player from the startWindow
  */
 void SetWindow::setPlayerName(QString n)
 {
@@ -226,7 +235,6 @@ void SetWindow::setPlayerName(QString n)
     std::string hmmm = name.toStdString();
     game.change_player_name(hmmm);
     setWindowTitle("Ship Happens");
-    //me.change_player_names(name.toStdString(), "Netzwerkname");
 }
 
 /**
@@ -268,37 +276,28 @@ void SetWindow::selectSubmarine()
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setColumnWidth(i,sqSize);
 
-        //QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
         QTableWidgetItem *itemL = new QTableWidgetItem();
         itemL->setBackgroundColor(Qt::black);
-        //itemL->setSizeHint(QSize(1,1));
         uii->shipTable->setItem(0,0,itemL);
-        //QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");
         QTableWidgetItem *itemR = new QTableWidgetItem();
         itemR->setBackgroundColor(Qt::black);
-        //itemR->setSizeHint(QSize(10,10));
         uii->shipTable->setItem(0,1,itemR);
     }
     else{
         uii->shipTable->setColumnCount(1);
         uii->shipTable->setColumnWidth(0,sqSize);
-
         uii->shipTable->setRowCount(zaehler);
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setRowHeight(i,sqSize);
 
         QTableWidgetItem *itemL = new QTableWidgetItem();
         itemL->setBackgroundColor(Qt::black);
-        //itemL->setSizeHint(QSize(1,1));
         uii->shipTable->setItem(0,0,itemL);
         QTableWidgetItem *itemR = new QTableWidgetItem();
         itemR->setBackgroundColor(Qt::black);
-        //itemR->setSizeHint(QSize(10,10));
         uii->shipTable->setItem(1,0,itemR);
     }
     uii->shipTable->selectAll();
-    uii->shipTable->setGeometry(QRect(0,0,sqSize,sqSize));
-    uii->shipTable->setIconSize(QSize(sqSize,sqSize));
 }
 
 /**
@@ -311,50 +310,38 @@ void SetWindow::selectDestroyer()
     if(horizontal){
         uii->shipTable->setRowCount(1);
         uii->shipTable->setRowHeight(0,sqSize);
-
         uii->shipTable->setColumnCount(zaehler);
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setColumnWidth(i,sqSize);
 
-        //QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
         QTableWidgetItem *itemL = new QTableWidgetItem();
         itemL->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,0,itemL);
-        //QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(hmiddle),"");
         QTableWidgetItem *itemM = new QTableWidgetItem();
         itemM->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,1,itemM);
-        //QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");
         QTableWidgetItem *itemR = new QTableWidgetItem();
         itemR->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,2,itemR);
-
         uii->shipTable->selectAll();
-        uii->shipTable->setIconSize(QSize(sqSize,sqSize));
     }
     else{
         uii->shipTable->setColumnCount(1);
         uii->shipTable->setColumnWidth(0,sqSize);
-
         uii->shipTable->setRowCount(zaehler);
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setRowHeight(i,sqSize);
 
-        //QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
         QTableWidgetItem *itemL = new QTableWidgetItem();
         itemL->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,0,itemL);
-        //QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(vmiddle),"");
         QTableWidgetItem *itemM = new QTableWidgetItem();
         itemM->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,1,itemM);
-        //QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");
         QTableWidgetItem *itemR = new QTableWidgetItem();
         itemR->setBackgroundColor(Qt::black);
         uii->shipTable->setItem(0,2,itemR);
-
         uii->shipTable->selectAll();
-        uii->shipTable->setIconSize(QSize(sqSize,sqSize));
     }
 }
 
@@ -369,16 +356,10 @@ void SetWindow::selectBattleship()
     if(horizontal){
         uii->shipTable->setRowCount(1);
         uii->shipTable->setRowHeight(0,fieldSize);
-
         uii->shipTable->setColumnCount(zaehler);
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setColumnWidth(i,fieldSize);
 
-
-        /*QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(hmiddle),"");
-        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(hmiddle),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");*/
         QTableWidgetItem *itemL = new QTableWidgetItem();
         itemL->setBackgroundColor(Qt::black);
         QTableWidgetItem *itemM = new QTableWidgetItem();
@@ -391,22 +372,15 @@ void SetWindow::selectBattleship()
         uii->shipTable->setItem(0,1,itemM);
         uii->shipTable->setItem(0,2,itemM2);
         uii->shipTable->setItem(0,3,itemR);
-
         uii->shipTable->selectAll();
-        uii->shipTable->setIconSize(QSize(fieldSize,fieldSize));
     }
     else{
         uii->shipTable->setColumnCount(1);
         uii->shipTable->setColumnWidth(0,fieldSize);
-
         uii->shipTable->setRowCount(zaehler);
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setRowHeight(i,fieldSize);
 
-        /*QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(vmiddle),"");
-        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(vmiddle),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");*/
         QTableWidgetItem *itemL = new QTableWidgetItem();
         itemL->setBackgroundColor(Qt::black);
         QTableWidgetItem *itemM = new QTableWidgetItem();
@@ -419,9 +393,7 @@ void SetWindow::selectBattleship()
         uii->shipTable->setItem(0,1,itemM);
         uii->shipTable->setItem(0,2,itemM2);
         uii->shipTable->setItem(0,3,itemR);
-
         uii->shipTable->selectAll();
-        uii->shipTable->setIconSize(QSize(fieldSize,fieldSize));
     }
 }
 
@@ -435,16 +407,10 @@ void SetWindow::selectAirCarrier()
     if(horizontal){
         uii->shipTable->setRowCount(1);
         uii->shipTable->setRowHeight(0,sqSize);
-
         uii->shipTable->setColumnCount(zaehler);
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setColumnWidth(i,sqSize);
 
-        /*QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(left),"");
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(hmiddle),"");
-        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(hmiddle),"");
-        QTableWidgetItem *itemM3 = new QTableWidgetItem(QIcon(hmiddle),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(right),"");*/
         QTableWidgetItem *itemL = new QTableWidgetItem();
         itemL->setBackgroundColor(Qt::black);
         QTableWidgetItem *itemM = new QTableWidgetItem();
@@ -460,23 +426,15 @@ void SetWindow::selectAirCarrier()
         uii->shipTable->setItem(0,2,itemM2);
         uii->shipTable->setItem(0,3,itemM3);
         uii->shipTable->setItem(0,4,itemR);
-
         uii->shipTable->selectAll();
-        uii->shipTable->setIconSize(QSize(sqSize,sqSize));
     }
     else{
         uii->shipTable->setColumnCount(1);
         uii->shipTable->setColumnWidth(0,sqSize);
-
         uii->shipTable->setRowCount(zaehler);
         for(int i=0;i<zaehler;i++)
             uii->shipTable->setRowHeight(i,sqSize);
 
-        /*QTableWidgetItem *itemL = new QTableWidgetItem(QIcon(top),"");
-        QTableWidgetItem *itemM = new QTableWidgetItem(QIcon(vmiddle),"");
-        QTableWidgetItem *itemM2 = new QTableWidgetItem(QIcon(vmiddle),"");
-        QTableWidgetItem *itemM3 = new QTableWidgetItem(QIcon(vmiddle),"");
-        QTableWidgetItem *itemR = new QTableWidgetItem(QIcon(bottom),"");*/
         QTableWidgetItem *itemL = new QTableWidgetItem();
         itemL->setBackgroundColor(Qt::black);
         QTableWidgetItem *itemM = new QTableWidgetItem();
@@ -492,9 +450,7 @@ void SetWindow::selectAirCarrier()
         uii->shipTable->setItem(0,2,itemM2);
         uii->shipTable->setItem(0,3,itemM3);
         uii->shipTable->setItem(0,4,itemR);
-
         uii->shipTable->selectAll();
-        uii->shipTable->setIconSize(QSize(sqSize,sqSize));
     }
 }
 
@@ -504,7 +460,6 @@ void SetWindow::selectAirCarrier()
  */
 void SetWindow::tableManagement()
 {
-    uii->shipTable->setStyleSheet("selection-background-color: transparent;");
     uii->fieldTable->setAcceptDrops(true);
     uii->fieldTable->setRowCount(width);
     uii->fieldTable->setColumnCount(height);
@@ -534,8 +489,7 @@ void SetWindow::tableManagement()
         }
     }
     uii->fieldTable->setDragDropMode(QAbstractItemView::DropOnly);
-    uii->fieldTable->setIconSize(QSize(sqSize,sqSize));
-
+    uii->fieldTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
 /**
@@ -551,7 +505,7 @@ Game &SetWindow::getGameRef()
 /**
  * @brief SetWindow::setHost
  * @param h
- * get the information form the StartWindow if this window is host or not
+ * get the information from the StartWindow if this player is host or not
  */
 void SetWindow::setHost(bool h)
 {

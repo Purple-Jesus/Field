@@ -58,7 +58,7 @@ void StartWindow::openGame()
     host = true;
     if(numb == 1)
         server.startServer();
-    setW->setWindowTitle("Ship Happens");
+    setW->setWindowTitle("Ship Happens!");
     setW->setPlayerName(name);
     setW->setHost(host);
     setW->show();
@@ -91,7 +91,7 @@ void StartWindow::listWindowClosed()
 {
     listW->close();
     delete listW;
-    setW->setWindowTitle("Ship Happens");
+    setW->setWindowTitle("Ship Happens!");
     setW->setHost(false);
     setW->show();
 }
