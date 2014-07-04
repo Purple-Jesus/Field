@@ -33,16 +33,19 @@ private:
     ListWindow *listW;
     SetWindow *setW;
     PlayWindow *playW;
-    MyServer server;
-    MySocket socket;
+    MyServer *server;
+    MySocket *socket;
     bool host;
     int numb;
 
 signals:
     void setStartActivity(bool);
 
-public slots:
+private slots:
     void getName();
+
+public slots:
+
     void openGame();
     void joinGame();
     void listWindowClosed();

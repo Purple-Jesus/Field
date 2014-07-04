@@ -43,6 +43,7 @@ SetWindow::SetWindow(QWidget *parent) :
     uii->shipTable->setDragEnabled(true);
     setWindowIcon(QPixmap("images/ship.png"));
     setWindowTitle("Ship Happens");
+    qDebug("     After all that field stuff");
 
     std::string enemyN = "Ganzer Peter";
     game.change_enemy_name(enemyN);
@@ -51,6 +52,7 @@ SetWindow::SetWindow(QWidget *parent) :
         uii->startButton->setText("Start");
     else
         uii->startButton->setText("Bereit");
+    qDebug("     After all that name stuff");
 
     connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
     connect(uii->destroyerButton, SIGNAL(clicked()), this, SLOT(selectDestroyer()));
@@ -61,6 +63,7 @@ SetWindow::SetWindow(QWidget *parent) :
     connect(this, SIGNAL(startGame()), parent, SLOT(startGame()));
     connect(uii->airCarrierButton, SIGNAL(clicked()), this, SLOT(selectAirCarrier()));
     connect(uii->shipTable, SIGNAL(itemSelectionChanged()), uii->shipTable, SLOT(selectAll()));
+    qDebug("     After all that connecting stuff exepct network");
 }
 
 /**
@@ -75,9 +78,16 @@ SetWindow::~SetWindow()
 
 }
 
+void SetWindow::getBoard(){
+    if(host){
+        game.receive_enemy_board_from_network(server->Receive_Board());
+        qDebug("     Board ist sicher und ohne Dellen angekommen");
+    }
+}
+
 /**
  * @brief SetWindow::checkSet
- * checks if all ships are set
+ * Slot that checks if all ships are set
  * sends the board to the network
  * emits the startGame() to start the PlayWindow
  */
@@ -85,7 +95,14 @@ void SetWindow::checkSet()
 {
     //if((sub == -1) && (dest == -1) && (batt == -1) && (air == -1)){
     if(true){
-        game.receive_enemy_board_from_network(game.send_board_to_network(board));
+        if(host){
+            qDebug("     Server: send board");
+            server->Send_Board(game.send_board_to_network(board));
+        }
+        else{
+            qDebug("     Client: send board");
+            socket->Send_Board(game.send_board_to_network(board));
+        }
         emit startGame();
     }
     else
@@ -113,7 +130,7 @@ void SetWindow::getItems(QTableWidgetItem *item)
 void SetWindow::oneStepBack(){
     disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
     for(int i=0;i<zaehler;i++){
-        if(!squareList[i]->get_square_set()){
+        if(squareList[i]->get_square_set()){
             qDebug("making it black");
             //uii->fieldTable->item(itemList[i]->row(),itemList[i]->column())->setBackgroundColor(Qt::black);
             itemList[i]->setBackgroundColor(Qt::black);
@@ -139,8 +156,8 @@ void SetWindow::setPlayerShip()
     Square *sq3 = squareList[2];
     Square *sq4 = squareList[3];
     Square *sq5 = squareList[4];
-    sq1 = game.getBoardRef().get_Square_ptr((size_t)itemList[0]->column()+1, (size_t)itemList[0]->row()+1);
-    sq2 = game.getBoardRef().get_Square_ptr((size_t)itemList[1]->column()+1, (size_t)itemList[1]->row()+1);
+    //sq1 = game.getBoardRef().get_Square_ptr((size_t)itemList[0]->column()+1, (size_t)itemList[0]->row()+1);
+    //sq2 = game.getBoardRef().get_Square_ptr((size_t)itemList[1]->column()+1, (size_t)itemList[1]->row()+1);
     switch(zaehler){
         case 2:
             if(!game.place_ships(sq1,sq2)){
@@ -148,8 +165,8 @@ void SetWindow::setPlayerShip()
                 oneStepBack();
             }
             else{
-                squareList.clear();
                 game.getPlayer().get_Submarine_ref(sub).set_ship(sq1,sq2);
+                squareList.clear();
                 sub -= 1;
                 uii->submarineButton->setText("Submarine " + QString::number(sub) + "x");
             }
@@ -162,6 +179,7 @@ void SetWindow::setPlayerShip()
             }
             else{
                 game.getPlayer().get_Destroyer_ref((size_t)dest).set_ship(sq1,sq2,sq3);
+                squareList.clear();
                 dest -= 1;
                 uii->destroyerButton->setText("Zerstoerer " + QString::number(dest) + "x");
             }
@@ -176,7 +194,9 @@ void SetWindow::setPlayerShip()
             }
             else{
                 game.getPlayer().get_BattleShip_ref(batt).set_ship(sq1,sq2,sq3,sq4);
+                squareList.clear();
                 batt -= 1;
+                uii->battleButton->setText("Schlachtschiff " + QString::number(batt) + "x");
             }
             break;
         case 5:
@@ -189,6 +209,7 @@ void SetWindow::setPlayerShip()
             }
             else{
                 game.getPlayer().get_AirCarrier_ref(air).set_ship(sq1,sq2,sq3,sq4,sq5);
+                squareList.clear();
                 air -= 1;
                 uii->airCarrierButton->setText("Flugzeugtraeger " + QString::number(air) + "x");
             }
@@ -507,12 +528,18 @@ Game &SetWindow::getGameRef()
  * @param h
  * get the information from the StartWindow if this player is host or not
  */
-void SetWindow::setHost(bool h)
+void SetWindow::setHost(MyServer *serve)
 {
-    host = h;
+    server = serve;
+    host = true;
+    uii->startButton->setText("Start");
+    connect(server, SIGNAL(sendReady()), this, SLOT(getBoard()));
+}
 
-    if(host)
-        uii->startButton->setText("Start");
-    else
-        uii->startButton->setText("Bereit");
+void SetWindow::setClient(MySocket *socke)
+{
+    socket = socke;
+    host = false;
+    uii->startButton->setText("Bereit");
+    //connect(socket, ,this, );
 }

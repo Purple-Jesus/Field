@@ -1,52 +1,56 @@
 #include "mysocket.h"
 #include <QString>
 #include <QTextStream>
-#include <string>
-#include <iostream>
+#include <string.h>
 
 MySocket::MySocket(QObject *parent) :
     QObject(parent)
 {
 }
 
-QString MySocket::StartSocket(QString ip){
-
+bool MySocket::Start_Socket(QString ip){
     socket = new QTcpSocket(this);
-    QTextStream cin(stdin);
 
-    connect(socket,SIGNAL(connected()),this,SLOT(connected()));
-    connect(socket,SIGNAL(disconnected()),this,SLOT(disconnected()));
-    connect(socket,SIGNAL(readyRead()),this,SLOT(readyRead()));
-
-    //qDebug() << "Bitte Ip eingeben: ";
-    //cin >> ip;
-
-    //qDebug() << "Connecting...";
+    //connect(socket,SIGNAL(disconnected()),this,SLOT(disconnected()));
+    connect(socket,SIGNAL(readyRead()),this,SLOT(Receive_Board()));
+    connect(socket,SIGNAL(readyRead()),this,SLOT(Receive_Shot()));
 
     socket->connectToHost(ip,1234);
 
     if (!socket->waitForConnected(3000)){
-        return socket->errorString();
+
+        return 0;
     }
-    return "true";
+    else
+        return 1;
+}
+void MySocket::Send_Board(char *board){
+    const char* poard = board;
+    socket->write(poard);
 }
 
-
-void MySocket::connected()
-{
+char *MySocket::Receive_Board(){
     QByteArray board;
-
-    socket->write(board);
+    board = socket->readAll();
+    return board.data();
 }
 
+void MySocket::Send_Shot(struct shot shot){
 
-void MySocket::disconnected(){
-
-    qDebug() << "Disconnected!";
+    socket->write((const char*)&shot,sizeof(struct shot));
 }
 
-void MySocket::readyRead(){
+struct MySocket::shot MySocket::Receive_Shot(){
+    QByteArray cords = socket->readAll();
+    struct shot shot;
+    memcpy(((char *)&shot), cords.constData(), sizeof(struct shot));
+    return shot;
+}
 
-    qDebug() << "Reading...";
-    qDebug() << socket->readAll();
+void MySocket::Ready(){
+    socket->write("READY");
+}
+
+void MySocket::Close_Socket(){
+    socket->close();
 }

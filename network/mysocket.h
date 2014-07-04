@@ -10,20 +10,31 @@
 class MySocket : public QObject
 {
     Q_OBJECT
+
 public:
     explicit MySocket(QObject *parent = 0);
-    QString StartSocket(QString);
+    bool Start_Socket(QString);
+    void Ready();
+    struct shot {
+        int x, y;
+    };
 
 public slots:
 
-    void connected();
-    void disconnected();
-    void readyRead();
+    void Send_Board(char *board);
+    char *Receive_Board();
+    void Close_Socket();
+    void Send_Shot(struct shot);
+    struct shot Receive_Shot();
+
+signals:
+
+
+
 
 private:
 
     QTcpSocket *socket;
-
 };
 
 #endif // MYSOCKET_H

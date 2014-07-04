@@ -18,9 +18,9 @@ class ListWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit ListWindow(MySocket &s, QWidget *parent);
+    explicit ListWindow(MySocket *s, QWidget *parent);
     ~ListWindow();
-    QString getIP();
+    //QString getIP();
     
 private:
     Ui::ListWindow *ui;
@@ -30,7 +30,7 @@ private:
 signals:
     void connected();
 
-public slots:
+private slots:
     void startClicked();
     void setIP(QString i);
 

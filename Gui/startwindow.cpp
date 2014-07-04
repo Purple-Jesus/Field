@@ -12,10 +12,13 @@ StartWindow::StartWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::StartWindow)
 {
-    ui->setupUi(this);
     qDebug("StartWindow");
+    ui->setupUi(this);
+    server = new MyServer(this);
+    socket = new MySocket(this);
     setW = new SetWindow(this);
     numb = 0;
+    qDebug(" StartWindow END");
 
     connect(ui->lineEdit, SIGNAL(editingFinished()), this, SLOT(getName()));
     connect(ui->startGameButton, SIGNAL(clicked()), this, SLOT(openGame()));
@@ -28,8 +31,8 @@ StartWindow::StartWindow(QWidget *parent) :
  */
 StartWindow::~StartWindow()
 {
-    delete setW;
-    delete playW;
+    //delete setW;
+    //delete playW;
     delete ui;
     qDebug("~StartWindow");
 }
@@ -56,11 +59,14 @@ void StartWindow::openGame()
     numb += 1;
     ui->statusBar->showMessage("Wait for network stuff.");
     host = true;
+    qDebug(" start server");
     if(numb == 1)
-        server.startServer();
+        server->Start_Server();
+    qDebug(" server started");
     setW->setWindowTitle("Ship Happens!");
     setW->setPlayerName(name);
-    setW->setHost(host);
+    qDebug(" pass server-object");
+    setW->setHost(server);
     setW->show();
     hide();
 }
@@ -92,7 +98,7 @@ void StartWindow::listWindowClosed()
     listW->close();
     delete listW;
     setW->setWindowTitle("Ship Happens!");
-    setW->setHost(false);
+    setW->setClient(socket);
     setW->show();
 }
 
@@ -105,11 +111,6 @@ void StartWindow::listWindowClosed()
  */
 void StartWindow::startGame()
 {
-    if(host)
-        qDebug(" true");
-    else
-        qDebug(" false");
-    //setW->getGameRef().player_print_boards();
     playW = new PlayWindow(host, setW->getGameRef(), this);
     setW->close();
     playW->show();
@@ -131,6 +132,10 @@ void StartWindow::revenge()
         delete playW;
         delete setW;
         setW = new SetWindow(this);
+        if(host)
+            setW->setHost(server);
+        else
+            setW->setClient(socket);
         setW->show();
     }
 }

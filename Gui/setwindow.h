@@ -8,6 +8,8 @@
 #include <QPixmap>
 #include "game.h"
 #include "player.h"
+#include "myserver.h"
+#include "mysocket.h"
 
 namespace Ui {
 class SetWindow;
@@ -26,9 +28,10 @@ public:
     ~SetWindow();
 
     Game &getGameRef();
-    QTableWidget *getTable();
-    //void clearTable();
-    void setHost(bool h);
+    //QTableWidget *getTable();
+    void setHost(MyServer *serve);
+    void setClient(MySocket *socke);
+
 
 
 private:
@@ -68,6 +71,8 @@ private:
     void refresh(int);
     char* cutBoard();
     void oneStepBack();
+    MyServer *server;
+    MySocket *socket;
 
 
 signals:
@@ -87,6 +92,7 @@ private slots:
     void setPlayerShip();
     void changeDirection();
     void checkSet();
+    void getBoard();
     //void resqueTable(int a, int b);
 
 

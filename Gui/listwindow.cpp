@@ -7,12 +7,12 @@
  * @param parent
  * Constructor
  */
-ListWindow::ListWindow(MySocket &s, QWidget *parent) :
+ListWindow::ListWindow(MySocket *s, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::ListWindow)
 {
     ui->setupUi(this);
-    socke = &s;
+    socke = s;
     setWindowTitle("Server wahl");
     setWindowIcon(QPixmap("images/ship.png"));
 
@@ -40,13 +40,11 @@ ListWindow::~ListWindow()
 void ListWindow::startClicked()
 {
     ui->label_2->setText("Verbinden...");
-    QString socketStr = socke->StartSocket(ip);
-    if(socketStr == "true"){
-        qDebug("Wieso springst du immer in diese Schleife?");
+    if(socke->Start_Socket(ip)){
         emit connected();
     }
     else
-        ui->label_2->setText(socketStr);
+        ui->label_2->setText("Socket konnte nicht gestartet werden.");
 }
 
 /**

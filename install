@@ -1,0 +1,11 @@
+#!/bin/bash
+echo Beginnt mit der Installation von Ship Happens:
+echo Installiert qt4
+sudo apt-get install libqt4-core libqt4-gui libqt4-network qt4-qmake 
+
+echo Kompiliert
+#qmake -project
+qmake
+make
+make clean
+./Ship_Happens
