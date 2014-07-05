@@ -44,7 +44,8 @@ private:
     bool host;
     QImage templatBlue;
     QImage templatBlack;
-    int count;
+    int countOwn;
+    int countOther;
 
     void tableManagement();
     void setShips();

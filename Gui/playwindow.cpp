@@ -123,12 +123,12 @@ void PlayWindow::setBomb(int r, int c)
         ui->statusbar->showMessage("Yeaaaayyy das war der Gegner.",4000);
         //enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
         game.bomb_square((size_t)(c+1),(size_t)(r+1));
-        count -=1;
-        if(!game.change_activity_status() && count == 0){
-            endD = new EndDialog(game.get_player_name(),true,this);
+        countOther -=1;
+        if(!game.change_activity_status() && countOther == 0){
+            endD = new EndDialog(game.get_player_name(),false,this);
             endD->show();
         }
-        game.change_activity_status();
+        //game.change_activity_status();
         //game.change_activity_status();
         //game.getPlayer().print_field();
         //game.getPlayer().print_ships();
@@ -190,7 +190,8 @@ void PlayWindow::getBombed(int r, int c)
         ui->statusbar->showMessage("Yeaaaayyy das war der Gegner.",4000);
         //enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
         game.bomb_square((size_t)(c+1),(size_t)(r+1));
-        if(game.change_activity_status()){
+        countOwn -= 1;
+        if(game.change_activity_status() && countOwn == 0){
             endD = new EndDialog(game.get_player_name(),true,this);
             endD->show();
         }
@@ -296,11 +297,14 @@ void PlayWindow::tableManagement()
 }
 
 void PlayWindow::countSet(){
-    count = 0;
+    countOwn = 0;
+    countOther = 0;
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
             if(game.getEnemyBoardRef().get_Square_ptr((size_t)i+1,(size_t)j+1)->get_square_set())
-                count +=1;
+                countOther +=1;
+            if(game.getBoardRef().get_Square_ptr((size_t)i+1,(size_t)j+1)->get_square_set())
+                countOwn +=1;
         }
     }
 }

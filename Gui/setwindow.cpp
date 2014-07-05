@@ -97,7 +97,9 @@ void SetWindow::checkSet()
     if(true){
         if(host){
             qDebug("     Server: send board");
-            server->Send_Board(game.send_board_to_network(board));
+            game.receive_enemy_board_from_network(game.send_board_to_network(board));
+            //server->Send_Board(game.send_board_to_network(board));
+
         }
         else{
             qDebug("     Client: send board");
@@ -119,6 +121,8 @@ void SetWindow::getItems(QTableWidgetItem *item)
     squareList.append(game.getBoardRef().get_Square_ptr((size_t)item->column()+1,(size_t)item->row()+1));
     itemList << item;
     qDebug("%d",itemList.size());
+    int row = item->row();
+    int column = item->column();
     if(itemList.size() == zaehler){
         for(int i=squareList.size();i<5;i++){
             squareList.append(NULL);
@@ -134,11 +138,15 @@ void SetWindow::oneStepBack(){
             qDebug("making it black");
             //uii->fieldTable->item(itemList[i]->row(),itemList[i]->column())->setBackgroundColor(Qt::black);
             itemList[i]->setBackgroundColor(Qt::black);
+            int row = itemList[i]->row();
+            int column = itemList[i]->column();
         }
         else{
             qDebug("making it blue");
             //uii->fieldTable->item(itemList[i]->row(),itemList[i]->column())->setBackgroundColor(Qt::blue);
             itemList[i]->setBackgroundColor(Qt::blue);
+            int row = itemList[i]->row();
+            int column = itemList[i]->row();
         }
     }
     connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
