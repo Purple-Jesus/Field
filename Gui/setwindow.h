@@ -73,7 +73,6 @@ private:
     void oneStepBack();
     MyServer *server;
     MySocket *socket;
-    bool ready;
 
 
 signals:

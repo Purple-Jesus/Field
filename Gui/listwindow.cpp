@@ -29,7 +29,6 @@ ListWindow::ListWindow(MySocket *s, QWidget *parent) :
 ListWindow::~ListWindow()
 {
     delete ui;
-    qDebug("ListWindow beendet.");
 }
 
 /**

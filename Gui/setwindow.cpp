@@ -1,6 +1,5 @@
 #include "Gui/setwindow.h"
 #include "ui_setwindow.h"
-#include <QDebug>
 #include "my_headers.h"
 
 // Replace this with the current ini. list to get real ships
@@ -18,7 +17,6 @@ SetWindow::SetWindow(QWidget *parent) :
     left("images/white.png"), hmiddle("images/white.png"),right("images/white.png"),
     top("images/white.png"), vmiddle("images/white.png"), bottom("images/white.png")
 {
-    qDebug("    SetWindow");
     sub=5;
     dest=4;
     batt=3;
@@ -43,7 +41,6 @@ SetWindow::SetWindow(QWidget *parent) :
     uii->shipTable->setDragEnabled(true);
     setWindowIcon(QPixmap("images/ship.png"));
     setWindowTitle("Ship Happens");
-    qDebug("     After all that field stuff");
 
     std::string enemyN = "Ganzer Peter";
     game.change_enemy_name(enemyN);
@@ -52,7 +49,6 @@ SetWindow::SetWindow(QWidget *parent) :
         uii->startButton->setText("Start");
     else
         uii->startButton->setText("Bereit");
-    qDebug("     After all that name stuff");
 
     connect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
     connect(uii->destroyerButton, SIGNAL(clicked()), this, SLOT(selectDestroyer()));
@@ -63,7 +59,6 @@ SetWindow::SetWindow(QWidget *parent) :
     connect(this, SIGNAL(startGame()), parent, SLOT(startGame()));
     connect(uii->airCarrierButton, SIGNAL(clicked()), this, SLOT(selectAirCarrier()));
     connect(uii->shipTable, SIGNAL(itemSelectionChanged()), uii->shipTable, SLOT(selectAll()));
-    qDebug("     After all that connecting stuff exepct network");
 }
 
 /**
@@ -74,14 +69,12 @@ SetWindow::~SetWindow()
 {
     delete uii;
     delete board;
-    qDebug("    ~SetWindow");
 
 }
 
 void SetWindow::getBoard(){
     if(host){
         game.receive_enemy_board_from_network(server->Receive_Board());
-        qDebug("     Board ist sicher und ohne Dellen angekommen");
     }
 }
 
@@ -93,15 +86,13 @@ void SetWindow::getBoard(){
  */
 void SetWindow::checkSet()
 {
-    if(ready){
+    if((sub == -1) && (dest == -1) && (batt == -1) && (air == -1)){
         if(host){
-            qDebug("     Server: send board");
             game.receive_enemy_board_from_network(game.send_board_to_network(board));
             //server->Send_Board(game.send_board_to_network(board));
 
         }
         else{
-            qDebug("     Client: send board");
             socket->Send_Board(game.send_board_to_network(board));
         }
         emit startGame();
@@ -119,7 +110,6 @@ void SetWindow::getItems(QTableWidgetItem *item)
 {
     squareList.append(game.getBoardRef().get_Square_ptr((size_t)item->column()+1,(size_t)item->row()+1));
     itemList << item;
-    qDebug("%d",itemList.size());
     int row = item->row();
     int column = item->column();
     if(itemList.size() == zaehler){
@@ -134,15 +124,11 @@ void SetWindow::oneStepBack(){
     disconnect(uii->fieldTable, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(getItems(QTableWidgetItem*)));
     for(int i=0;i<zaehler;i++){
         if(squareList[i]->get_square_set()){
-            qDebug("making it black");
-            //uii->fieldTable->item(itemList[i]->row(),itemList[i]->column())->setBackgroundColor(Qt::black);
             itemList[i]->setBackgroundColor(Qt::black);
             int row = itemList[i]->row();
             int column = itemList[i]->column();
         }
         else{
-            qDebug("making it blue");
-            //uii->fieldTable->item(itemList[i]->row(),itemList[i]->column())->setBackgroundColor(Qt::blue);
             itemList[i]->setBackgroundColor(Qt::blue);
             int row = itemList[i]->row();
             int column = itemList[i]->row();
@@ -163,8 +149,6 @@ void SetWindow::setPlayerShip()
     Square *sq3 = squareList[2];
     Square *sq4 = squareList[3];
     Square *sq5 = squareList[4];
-    //sq1 = game.getBoardRef().get_Square_ptr((size_t)itemList[0]->column()+1, (size_t)itemList[0]->row()+1);
-    //sq2 = game.getBoardRef().get_Square_ptr((size_t)itemList[1]->column()+1, (size_t)itemList[1]->row()+1);
     switch(zaehler){
         case 2:
             if(!game.place_ships(sq1,sq2)){
@@ -179,7 +163,7 @@ void SetWindow::setPlayerShip()
             }
             break;
         case 3:
-            //sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
+
             if(!game.place_ships(sq1,sq2,sq3)){
                 oneStepBack();
                 uii->statusbar->showMessage("Hier kann kein Schiff gesetzt werden.",3000);
@@ -193,8 +177,6 @@ void SetWindow::setPlayerShip()
 
             break;
         case 4:
-            //sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
-            //sq4 = game.getBoardRef().get_Square_ptr((size_t)itemList[3]->column()+1, (size_t)itemList[3]->row()+1);
             if(!game.place_ships(sq1,sq2,sq3,sq4)){
                 uii->statusbar->showMessage("Hier kann kein Schiff gesetzt werden.",3000);
                 oneStepBack();
@@ -207,9 +189,6 @@ void SetWindow::setPlayerShip()
             }
             break;
         case 5:
-            //sq3 = game.getBoardRef().get_Square_ptr((size_t)itemList[2]->column()+1, (size_t)itemList[2]->row()+1);
-            //sq4 = game.getBoardRef().get_Square_ptr((size_t)itemList[3]->column()+1, (size_t)itemList[3]->row()+1);
-            //sq5 = game.getBoardRef().get_Square_ptr((size_t)itemList[4]->column()+1, (size_t)itemList[4]->row()+1);
             if(!game.place_ships(sq1,sq2,sq3,sq4,sq5)){
                 uii->statusbar->showMessage("Hier kann kein Schiff gesetzt werden.",3000);
                 oneStepBack();
@@ -507,10 +486,8 @@ void SetWindow::tableManagement()
         uii->fieldTable->setRowHeight(i,sqSize);
 
     // fills the fields of the table with squareg items
-    //QPixmap pixmap("images/sea.png");
     for(int i=0;i<width;i++){
         for(int j=0;j<height;j++){
-            //QTableWidgetItem *item = new QTableWidgetItem(QIcon(pixmap)," ",1000);
             QTableWidgetItem *item = new QTableWidgetItem();
             item->setBackgroundColor(Qt::blue);
             uii->fieldTable->setItem(i,j,item);
@@ -548,5 +525,4 @@ void SetWindow::setClient(MySocket *socke)
     socket = socke;
     host = false;
     uii->startButton->setText("Bereit");
-    //connect(socket, ,this, );
 }

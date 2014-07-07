@@ -18,13 +18,9 @@ PlayWindow::PlayWindow(bool h, Game _game, QWidget *parent) :
     black(QColor(0,0,0)), red(QColor(255,0,0)),
     host(h)
 {
-    qDebug("    Playwindow");
+
     ui->setupUi(this);
     setWindowTitle("Ship Happens!");
-    //game.getEnemyBoardRef() = game.getBoardRef();
-    //playerBoard.print_own_board();
-    //game.enemy_set_ship_test();
-    //enemyBoard.print_own_board();
     game.setStartActivity(host);
 
     ui->label_2->setText("Gewaesser von " + QString::fromStdString(game.get_enemy_name()));
@@ -59,6 +55,7 @@ PlayWindow::PlayWindow(bool h, Game _game, QWidget *parent) :
     connect(ui->enemyTable, SIGNAL(cellClicked(int,int)), this, SLOT(setBomb(int,int)));
     connect(ui->playerTable, SIGNAL(cellClicked(int,int)), this, SLOT(getBombed(int,int)));
     connect(this, SIGNAL(quitSignal()), parent, SLOT(revenge()));
+    game.printBoards();
 }
 
 /**
@@ -103,9 +100,8 @@ void PlayWindow::setBomb(int r, int c)
         return;
     }
 
-
     int size = ui->enemyTable->iconSize().height();
-    QImage temp = QImage("images/white");
+    QImage temp = QImage("/home/felix/Documents/prog/Field/images/white");
     if(enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->get_square_set()){
         pen.setColor(Qt::black);
         painter.begin(&temp);
@@ -121,17 +117,12 @@ void PlayWindow::setBomb(int r, int c)
         painter.drawPoint(((size/2-0.5)),((size/2-0.5)));
         painter.end();
         ui->statusbar->showMessage("Yeaaaayyy das war der Gegner.",4000);
-        //enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
         game.bomb_square((size_t)(c+1),(size_t)(r+1));
         countOther -=1;
         if(!game.change_activity_status() && countOther == 0){
             endD = new EndDialog(game.get_player_name(),true,this);
             endD->show();
         }
-        //game.change_activity_status();
-        //game.change_activity_status();
-        //game.getPlayer().print_field();
-        //game.getPlayer().print_ships();
     }
     else{
         pen.setColor(Qt::blue);
@@ -173,22 +164,12 @@ void PlayWindow::getBombed(int r, int c)
     int size = ui->enemyTable->iconSize().height();
     QImage temp = templatBlue;
     if(playerBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->get_square_set()){
-        /*pen.setColor(Qt::black);
-        painter.begin(&temp);
-        painter.setPen(pen);
-        for(int i=0;i<temp.height();i++)
-            for(int j=0;j<temp.width();j++){
-                painter.drawPoint(i,j);
-            }
-        painter.end();*/
-
         pen.setColor(red);
         painter.begin(&temp);
         painter.setPen(pen);
         painter.drawPoint(((size/2-0.5)),((size/2-0.5)));
         painter.end();
         ui->statusbar->showMessage("Yeaaaayyy das war der Gegner.",4000);
-        //enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->set_hit();
         game.bomb_square((size_t)(c+1),(size_t)(r+1));
         countOwn -= 1;
         if(game.change_activity_status() && countOwn == 0){
@@ -196,20 +177,8 @@ void PlayWindow::getBombed(int r, int c)
             endD->show();
         }
         game.change_activity_status();
-        //game.getPlayer().print_field();
-        //game.getPlayer().print_ships();
     }
     else{
-        /*
-        pen.setColor(Qt::blue);
-        painter.begin(&temp);
-        painter.setPen(pen);
-        for(int i=0;i<temp.height();i++)
-            for(int j=0;j<temp.width();j++){
-                painter.drawPoint(i,j);
-            }
-        painter.end();
-        */
         pen.setColor(black);
         painter.begin(&temp);
         painter.setPen(pen);
@@ -236,7 +205,6 @@ void PlayWindow::tableManagement()
         else
             table = ui->enemyTable;
 
-        qDebug("    tableManagement");
         table->setRowCount(width);
         table->setColumnCount(height);
         // set the headernames of the rows and columns

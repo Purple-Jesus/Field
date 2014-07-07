@@ -12,13 +12,11 @@ StartWindow::StartWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::StartWindow)
 {
-    qDebug("StartWindow");
     ui->setupUi(this);
     server = new MyServer(this);
     socket = new MySocket(this);
     setW = new SetWindow(this);
     numb = 0;
-    qDebug(" StartWindow END");
 
     connect(ui->lineEdit, SIGNAL(editingFinished()), this, SLOT(getName()));
     connect(ui->startGameButton, SIGNAL(clicked()), this, SLOT(openGame()));
@@ -31,10 +29,7 @@ StartWindow::StartWindow(QWidget *parent) :
  */
 StartWindow::~StartWindow()
 {
-    //delete setW;
-    //delete playW;
     delete ui;
-    qDebug("~StartWindow");
 }
 
 // Saves the name from the QLabel
@@ -59,13 +54,10 @@ void StartWindow::openGame()
     numb += 1;
     ui->statusBar->showMessage("Wait for network stuff.");
     host = true;
-    qDebug(" start server");
     if(numb == 1)
         server->Start_Server();
-    qDebug(" server started");
     setW->setWindowTitle("Ship Happens!");
     setW->setPlayerName(name);
-    qDebug(" pass server-object");
     setW->setHost(server);
     setW->show();
     hide();
