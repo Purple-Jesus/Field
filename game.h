@@ -100,8 +100,6 @@ public:
     bool getPlayerState();              // FF GUI1
     void setStartActivity(bool);       // FF GUI1
     Player& getPlayer();              // FF GUI1
-    void printBoards();              // FF GUI1
-
 };
 
 #endif // GAME_H

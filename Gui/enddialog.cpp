@@ -15,15 +15,15 @@ EndDialog::EndDialog(std::string name, bool win, QWidget *parent) :
     qDebug("         EndDialog");
     ui->setupUi(this);
     if(win){
-        ui->picture->setPixmap(QPixmap("/home/felix/Documents/prog/Field/images/funny.png"));
-        ui->label->setText("Herzlichen Glueckwunsch " + QString::fromStdString(name) + ", du hast das Spiel Gewonnen");
+        ui->picture->setPixmap(QPixmap("images/funny.png"));
+        ui->label->setText("Herzlichen Glueckwunsch " + QString::fromStdString(name) + ", du hast das Spiel Gewonnen!");
     }
     else{
         ui->picture->setPixmap(QPixmap("images/sad.png"));
-        ui->label->setText("Tut mir leid " + QString::fromStdString(name) + ", aber du hattest heute scheinbar kein Glueck");
+        ui->label->setText("Tut mir leid " + QString::fromStdString(name) + ", aber du hattest heute scheinbar kein Glueck.");
     }
 
-    setWindowTitle("Lust auf eine Revange?");
+    setWindowTitle("Lust auf eine Revanche?");
     connect(ui->pushButton, SIGNAL(clicked()), parent, SLOT(close()));
     connect(ui->pushButton_2, SIGNAL(clicked()), parent, SLOT(revenge()));
 }

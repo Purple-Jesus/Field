@@ -1045,6 +1045,7 @@ Board& Game::getEnemyBoardRef()
     return enemy.return_board_ref();
 }
 
+
 bool Game::getEnemyState()
 {
     return enemy.get_active();
@@ -1054,6 +1055,7 @@ bool Game::getPlayerState()
 {
     return player.get_active();
 }
+
 
 void Game::setStartActivity(bool host)
 {
@@ -1072,13 +1074,4 @@ Player& Game::getPlayer()
     Player &p = Game::player;
     return p;
 }
-
-void Game::printBoards()
-{
-    std::cout << "player:\n";
-    player.print_field();
-    std::cout << "enemy:\n";
-    enemy.print_field();
-}
-
 //GUI1 END

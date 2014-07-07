@@ -93,8 +93,7 @@ void SetWindow::getBoard(){
  */
 void SetWindow::checkSet()
 {
-    //if((sub == -1) && (dest == -1) && (batt == -1) && (air == -1)){
-    if(true){
+    if(ready){
         if(host){
             qDebug("     Server: send board");
             game.receive_enemy_board_from_network(game.send_board_to_network(board));

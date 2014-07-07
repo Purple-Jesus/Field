@@ -23,7 +23,7 @@
          <item row="2" column="0">
           <widget class="QLabel" name="label_2">
            <property name="text">
-            <string>Lust auf eine Revenge:</string>
+            <string>Lust auf eine Revanche:</string>
            </property>
           </widget>
          </item>

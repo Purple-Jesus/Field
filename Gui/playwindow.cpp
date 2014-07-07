@@ -59,7 +59,6 @@ PlayWindow::PlayWindow(bool h, Game _game, QWidget *parent) :
     connect(ui->enemyTable, SIGNAL(cellClicked(int,int)), this, SLOT(setBomb(int,int)));
     connect(ui->playerTable, SIGNAL(cellClicked(int,int)), this, SLOT(getBombed(int,int)));
     connect(this, SIGNAL(quitSignal()), parent, SLOT(revenge()));
-    game.printBoards();
 }
 
 /**
@@ -104,8 +103,9 @@ void PlayWindow::setBomb(int r, int c)
         return;
     }
 
+
     int size = ui->enemyTable->iconSize().height();
-    QImage temp = QImage("/home/felix/Documents/prog/Field/images/white");
+    QImage temp = QImage("images/white");
     if(enemyBoard.get_Square_ptr((size_t)(c+1),(size_t)(r+1))->get_square_set()){
         pen.setColor(Qt::black);
         painter.begin(&temp);
@@ -125,7 +125,7 @@ void PlayWindow::setBomb(int r, int c)
         game.bomb_square((size_t)(c+1),(size_t)(r+1));
         countOther -=1;
         if(!game.change_activity_status() && countOther == 0){
-            endD = new EndDialog(game.get_player_name(),false,this);
+            endD = new EndDialog(game.get_player_name(),true,this);
             endD->show();
         }
         //game.change_activity_status();
@@ -192,7 +192,7 @@ void PlayWindow::getBombed(int r, int c)
         game.bomb_square((size_t)(c+1),(size_t)(r+1));
         countOwn -= 1;
         if(game.change_activity_status() && countOwn == 0){
-            endD = new EndDialog(game.get_player_name(),true,this);
+            endD = new EndDialog(game.get_player_name(),false,this);
             endD->show();
         }
         game.change_activity_status();
